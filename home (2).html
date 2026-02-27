@@ -5,234 +5,400 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mind Mudra</title>
 
-<!-- Google Identity Services -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: 'Segoe UI', sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+scroll-behavior:smooth;
 }
 
-body{
-    height:100vh;
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)),
-    url("https://images.unsplash.com/photo-1506126613408-eca07ce68773");
-    background-size: cover;
-    background-position: center;
-    color:white;
-    overflow-x:hidden;
-}
-
-/* Navbar */
+/* NAVBAR */
 nav{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:20px 60px;
+position:fixed;
+top:0;
+width:100%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 60px;
+background:rgba(0,0,0,0.5);
+backdrop-filter:blur(10px);
+z-index:1000;
 }
 
-.logo{
-    font-size:28px;
-    font-weight:bold;
+nav h1{
+color:white;
 }
 
-.nav-buttons button{
-    margin-left:15px;
+nav ul{
+display:flex;
+gap:25px;
+list-style:none;
 }
 
-/* Buttons */
-button{
-    padding:10px 20px;
-    border:none;
-    border-radius:25px;
-    cursor:pointer;
-    font-size:15px;
-    transition:0.3s;
+nav ul li a{
+color:white;
+text-decoration:none;
+font-weight:500;
+transition:0.3s;
 }
 
-.login{
-    background:transparent;
-    border:2px solid white;
-    color:white;
+nav ul li a:hover{
+color:#00ffd5;
 }
 
-.signup{
-    background:#00c896;
-    color:white;
+.nav-buttons a{
+background:#00c896;
+color:white;
+padding:8px 16px;
+border-radius:20px;
+margin-left:10px;
+text-decoration:none;
+font-weight:600;
+transition:0.3s;
 }
 
-.start{
-    margin-top:25px;
-    padding:14px 30px;
-    font-size:18px;
-    background:#00c896;
+.nav-buttons a:hover{
+transform:scale(1.1);
 }
 
-button:hover{
-    transform:scale(1.05);
-}
-
-/* Hero */
+/* HERO */
 .hero{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    height:80vh;
-    flex-direction:column;
+min-height:100vh;
+background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+url("https://images.unsplash.com/photo-1506126613408-eca07ce68773");
+background-size:cover;
+background-position:center;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+text-align:center;
+color:white;
+padding-top:80px; /* prevents navbar cutting image */
 }
 
-.hero h1{
-    font-size:50px;
-    margin-bottom:20px;
+.hero h2{
+font-size:60px;
+margin-bottom:20px;
+animation:fadeDown 1.2s;
 }
 
-/* Modal */
-.modal-backdrop{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.5);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    visibility:hidden;
-    opacity:0;
-    transition:0.3s;
+.hero p{
+font-size:20px;
+max-width:650px;
+margin-bottom:30px;
+animation:fadeUp 1.2s;
 }
 
-.modal-backdrop.show{
-    visibility:visible;
-    opacity:1;
+.hero button{
+padding:14px 30px;
+background:#00c896;
+border:none;
+border-radius:25px;
+font-size:18px;
+cursor:pointer;
+transition:0.3s;
 }
 
-.modal{
-    width:100%;
-    max-width:500px;
-    background:white;
-    color:black;
-    border-radius:12px;
-    padding:25px;
+.hero button:hover{
+transform:scale(1.1);
 }
 
-.modal h2{
-    margin-bottom:15px;
+/* SECTION STYLE */
+section{
+padding:100px 10%;
 }
 
-.modal form{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+/* FEATURES */
+#features{
+background:#f5fffb;
 }
 
-.modal input{
-    padding:10px;
-    border-radius:8px;
-    border:1px solid #ccc;
+.features{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:30px;
 }
 
-.google-btn{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    padding:10px;
-    border-radius:8px;
-    border:1px solid #ddd;
-    background:white;
-    cursor:pointer;
-    font-weight:bold;
+.feature-card{
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
+text-align:center;
+transition:0.4s;
+opacity:0;
+transform:translateY(40px);
 }
 
-.actions{
-    display:flex;
-    justify-content:space-between;
-    margin-top:10px;
+.feature-card.show{
+opacity:1;
+transform:translateY(0);
 }
 
-.close-btn{
-    background:transparent;
-    border:none;
-    font-size:18px;
-    cursor:pointer;
+.feature-card:hover{
+transform:translateY(-8px);
+}
+
+/* HOW IT WORKS */
+#how{
+background:linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)),
+url("https://images.unsplash.com/photo-1544367567-0f2fcb009e0b");
+background-size:cover;
+background-position:center;
+color:white;
+}
+
+.steps{
+display:flex;
+flex-wrap:wrap;
+gap:30px;
+justify-content:center;
+}
+
+.step{
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(10px);
+padding:25px;
+border-radius:12px;
+width:260px;
+text-align:center;
+opacity:0;
+transform:translateY(40px);
+transition:0.5s;
+}
+
+.step.show{
+opacity:1;
+transform:translateY(0);
+}
+
+/* TESTIMONIALS */
+#testimonials{
+background:#f0fffb;
+}
+
+.testimonials{
+display:flex;
+flex-wrap:wrap;
+gap:30px;
+justify-content:center;
+}
+
+.testimonial{
+background:white;
+padding:25px;
+border-radius:15px;
+width:300px;
+text-align:center;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
+opacity:0;
+transform:translateY(40px);
+transition:0.5s;
+}
+
+.testimonial.show{
+opacity:1;
+transform:translateY(0);
+}
+
+.testimonial img{
+width:70px;
+height:70px;
+border-radius:50%;
+margin-bottom:10px;
+}
+
+/* ABOUT */
+#about{
+background:#e9fff7;
+text-align:center;
+}
+
+.about{
+max-width:750px;
+margin:auto;
+opacity:0;
+transform:translateY(40px);
+transition:0.5s;
+}
+
+.about.show{
+opacity:1;
+transform:translateY(0);
+}
+
+/* TITLES */
+.section-title{
+text-align:center;
+font-size:40px;
+margin-bottom:40px;
+}
+
+/* FOOTER */
+footer{
+background:#111;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+/* ANIMATIONS */
+@keyframes fadeDown{
+from{opacity:0; transform:translateY(-40px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+@keyframes fadeUp{
+from{opacity:0; transform:translateY(40px);}
+to{opacity:1; transform:translateY(0);}
 }
 </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
 <nav>
-<div class="logo">Mind Mudra</div>
+<h1>Mind Mudra</h1>
+
+<ul>
+<li><a href="#home">Home</a></li>
+<li><a href="#features">Features</a></li>
+<li><a href="#how">How It Works</a></li>
+<li><a href="#testimonials">Testimonials</a></li>
+<li><a href="#about">About Us</a></li>
+</ul>
+
 <div class="nav-buttons">
-<button class="login">Login</button>
-<button class="signup" onclick="openModal()">Sign Up</button>
+<a href="login.html">Login</a>
+<a href="signup.html">Sign Up</a>
 </div>
 </nav>
 
-<!-- Hero -->
-<section class="hero">
-<h1>Accessible Mental Wellness for Everyone</h1>
-<p>AI-guided yoga, meditation and emotional support.</p>
-<button class="start">Start Wellness Check</button>
+<!-- HERO -->
+<section class="hero" id="home">
+<h2>Improve Your Mental Wellness</h2>
+<p>
+Mind Mudra helps you check your mental health practice yoga,
+and track your progress daily.
+</p>
+<button onclick="window.location.href='signup.html'">
+Get Started
+</button>
 </section>
 
-<!-- Signup Modal -->
-<div id="signupModal" class="modal-backdrop">
-<div class="modal">
-<button class="close-btn" onclick="closeModal()">✕</button>
-<h2>Create Account</h2>
+<!-- FEATURES -->
+<section id="features">
+<h2 class="section-title">Features</h2>
 
-<form id="signupForm">
-<input type="text" placeholder="Full Name" required>
-<input type="email" placeholder="Email" required>
-<input type="password" placeholder="Password" required>
-
-<button type="submit" style="background:#00c896;color:white;">Create Account</button>
-
-<!-- Continue with Google (at end) -->
-<div style="margin-top:15px;">
-<div id="g_id_onload"
-     data-client_id="YOUR_GOOGLE_CLIENT_ID"
-     data-callback="handleCredentialResponse">
+<div class="features">
+<div class="feature-card">
+<h3>Mental Check</h3>
+<p>Answer quick questions to understand your current mental state.</p>
 </div>
 
-<div class="g_id_signin"
-     data-type="standard"
-     data-size="large"
-     data-theme="outline">
-</div>
+<div class="feature-card">
+<h3>Personalized Yoga</h3>
+<p>Get yoga suggestions based on your results.</p>
 </div>
 
-</form>
+<div class="feature-card">
+<h3>Progress Tracking</h3>
+<p>Monitor your improvement over time.</p>
+</div>
+
+<div class="feature-card">
+<h3>Emergency Support</h3>
+<p>Access immediate help and calming exercises.</p>
 </div>
 </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+<h2 class="section-title">How It Works</h2>
+
+<div class="steps">
+<div class="step">
+<h3>1. Sign Up</h3>
+<p>Create your Mind Mudra account.</p>
+</div>
+
+<div class="step">
+<h3>2. Mental Health Check</h3>
+<p>Answer a few questions about your mood.</p>
+</div>
+
+<div class="step">
+<h3>3. Get Yoga</h3>
+<p>Receive personalized yoga recommendations.</p>
+</div>
+
+<div class="step">
+<h3>4. Improve Daily</h3>
+<p>Track your progress and stay consistent.</p>
+</div>
+</div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+<h2 class="section-title">Testimonials</h2>
+
+<div class="testimonials">
+
+<div class="testimonial">
+<img src="https://randomuser.me/api/portraits/women/44.jpg">
+<h4>Priya Sharma</h4>
+<p>"This platform helped me stay calm during exams."</p>
+</div>
+
+<div class="testimonial">
+<img src="https://randomuser.me/api/portraits/men/32.jpg">
+<h4>Rahul Mehta</h4>
+<p>"Very simple and effective mental wellness tool."</p>
+</div>
+
+<div class="testimonial">
+<img src="https://randomuser.me/api/portraits/women/68.jpg">
+<h4>Ananya Patel</h4>
+<p>"The yoga suggestions really improved my mood."</p>
+</div>
+
+</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+<h2 class="section-title">About Us</h2>
+
+<div class="about">
+<p>
+Mind Mudra is a platform designed to make mental health support
+more accessible through simple tools, yoga, and personalized
+guidance.
+</p>
+</div>
+</section>
+
+<footer>
+<p>© 2026 Mind Mudra</p>
+</footer>
 
 <script>
-function openModal(){
-    document.getElementById("signupModal").classList.add("show");
+const observer = new IntersectionObserver(entries=>{
+entries.forEach(entry=>{
+if(entry.isIntersecting){
+entry.target.classList.add("show");
 }
+});
+});
 
-function closeModal(){
-    document.getElementById("signupModal").classList.remove("show");
-}
-
-function handleCredentialResponse(response) {
-    const data = parseJwt(response.credential);
-    alert("Signed in as: " + data.name);
-    closeModal();
-}
-
-function parseJwt (token) {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
-}
+document.querySelectorAll(".feature-card, .step, .testimonial, .about")
+.forEach(el=>observer.observe(el));
 </script>
 
 </body>
