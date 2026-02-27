@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yoga Session - Mind Mudra</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
+
+body{
+min-height:100vh;
+background:linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)),
+url("https://images.unsplash.com/photo-1544367567-0f2fcb009e0b");
+background-size:cover;
+background-position:center;
+color:white;
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+/* Navbar */
+nav{
+width:100%;
+display:flex;
+justify-content:space-between;
+padding:20px 40px;
+}
+
+.logo{
+font-size:24px;
+font-weight:bold;
+}
+
+nav button{
+padding:8px 18px;
+border:none;
+border-radius:20px;
+background:#00c896;
+color:white;
+cursor:pointer;
+}
+
+/* Main container */
+.container{
+margin-top:30px;
+width:90%;
+max-width:900px;
+text-align:center;
+animation:fadeUp 1s ease;
+}
+
+h1{
+margin-bottom:10px;
+}
+
+/* Camera box */
+.camera-box{
+margin-top:20px;
+background:rgba(255,255,255,0.1);
+backdrop-filter:blur(10px);
+padding:20px;
+border-radius:20px;
+}
+
+video{
+width:100%;
+border-radius:15px;
+}
+
+/* Pose feedback */
+.feedback{
+margin-top:20px;
+background:rgba(0,0,0,0.4);
+padding:15px;
+border-radius:10px;
+font-size:18px;
+}
+
+/* Pose info */
+.pose-info{
+margin-top:20px;
+display:flex;
+justify-content:space-around;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.pose-card{
+background:rgba(255,255,255,0.1);
+padding:15px;
+border-radius:10px;
+width:200px;
+transition:0.3s;
+}
+
+.pose-card:hover{
+transform:scale(1.05);
+}
+
+/* Buttons */
+.controls{
+margin-top:20px;
+}
+
+.controls button{
+margin:10px;
+padding:12px 20px;
+border:none;
+border-radius:25px;
+background:#00c896;
+color:white;
+cursor:pointer;
+transition:0.3s;
+}
+
+.controls button:hover{
+transform:scale(1.05);
+}
+
+/* Animation */
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:translateY(30px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="logo">Mind Mudra</div>
+<button onclick="goDashboard()">Dashboard</button>
+</nav>
+
+<div class="container">
+
+<h1>Yoga Monitoring Session</h1>
+<p>Follow the pose and keep your body aligned.</p>
+
+<div class="camera-box">
+<video id="video" autoplay></video>
+</div>
+
+<div class="feedback" id="feedback">
+AI Feedback: Starting camera...
+</div>
+
+<div class="pose-info">
+<div class="pose-card">Current Pose: <b>Mountain Pose</b></div>
+<div class="pose-card">Session Time: <span id="timer">0</span> sec</div>
+<div class="pose-card">Accuracy: 92%</div>
+</div>
+
+<div class="controls">
+<button onclick="startSession()">Start Session</button>
+<button onclick="nextPose()">Next Pose</button>
+<button onclick="endSession()">End Session</button>
+</div>
+
+</div>
+
+<script>
+
+// Camera access
+const video = document.getElementById("video");
+
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+video.srcObject = stream;
+})
+.catch(err => {
+document.getElementById("feedback").innerText =
+"Camera access denied.";
+});
+
+// Timer
+let time = 0;
+let timerInterval;
+
+function startSession(){
+document.getElementById("feedback").innerText =
+"AI: Keep your back straight and relax your shoulders.";
+
+timerInterval = setInterval(() => {
+time++;
+document.getElementById("timer").innerText = time;
+},1000);
+}
+
+// Change pose
+function nextPose(){
+const poses = [
+"Tree Pose",
+"Child Pose",
+"Warrior Pose",
+"Lotus Pose"
+];
+
+const pose = poses[Math.floor(Math.random()*poses.length)];
+
+document.querySelector(".pose-card").innerHTML =
+"Current Pose: <b>" + pose + "</b>";
+
+document.getElementById("feedback").innerText =
+"AI: Adjust your posture for " + pose;
+}
+
+// End session
+function endSession(){
+clearInterval(timerInterval);
+alert("Great job! Yoga session completed.");
+window.location.href = "dashboard.html";
+}
+
+function goDashboard(){
+window.location.href = "dashboard.html";
+}
+
+</script>
+
+</body>
+</html>
