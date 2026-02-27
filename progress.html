@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Progress Tracker - Mind Mudra</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
+
+body{
+min-height:100vh;
+background:linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.8)),
+url("https://images.unsplash.com/photo-1506744038136-46273834b3fb");
+background-size:cover;
+background-position:center;
+color:white;
+}
+
+/* Navbar */
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 40px;
+}
+
+.logo{
+font-size:24px;
+font-weight:bold;
+}
+
+nav button{
+padding:8px 18px;
+border:none;
+border-radius:20px;
+background:#00c896;
+color:white;
+cursor:pointer;
+}
+
+/* Container */
+.container{
+padding:40px 10%;
+animation:fadeUp 1s ease;
+}
+
+h1{
+text-align:center;
+margin-bottom:30px;
+}
+
+/* Stats cards */
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit, minmax(200px,1fr));
+gap:20px;
+margin-bottom:40px;
+}
+
+.card{
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(10px);
+padding:25px;
+border-radius:15px;
+text-align:center;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 15px 30px rgba(0,0,0,0.4);
+}
+
+.card h2{
+font-size:28px;
+margin-top:10px;
+}
+
+/* Chart container */
+.chart-box{
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(10px);
+padding:30px;
+border-radius:20px;
+text-align:center;
+}
+
+canvas{
+margin-top:20px;
+}
+
+/* Animation */
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:translateY(30px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="logo">Mind Mudra</div>
+<button onclick="goDashboard()">Dashboard</button>
+</nav>
+
+<div class="container">
+
+<h1>Your Wellness Progress</h1>
+
+<!-- Stats -->
+<div class="stats">
+
+<div class="card">
+<p>Yoga Sessions Completed</p>
+<h2 id="sessions">12</h2>
+</div>
+
+<div class="card">
+<p>Mental Wellness Score</p>
+<h2 id="score">82%</h2>
+</div>
+
+<div class="card">
+<p>Current Streak</p>
+<h2 id="streak">5 Days</h2>
+</div>
+
+<div class="card">
+<p>Mood Improvement</p>
+<h2 id="improve">+23%</h2>
+</div>
+
+</div>
+
+<!-- Chart -->
+<div class="chart-box">
+<h2>Mood History</h2>
+<canvas id="moodChart" width="700" height="300"></canvas>
+</div>
+
+</div>
+
+<script>
+
+function goDashboard(){
+window.location.href = "dashboard.html";
+}
+
+// Mood data (sample)
+const moodData = [40, 50, 45, 60, 70, 75, 82];
+const labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+const canvas = document.getElementById("moodChart");
+const ctx = canvas.getContext("2d");
+
+let progress = 0;
+
+function drawChart(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+// Axes
+ctx.strokeStyle = "white";
+ctx.beginPath();
+ctx.moveTo(50,20);
+ctx.lineTo(50,260);
+ctx.lineTo(650,260);
+ctx.stroke();
+
+// Labels
+ctx.fillStyle = "white";
+ctx.font = "14px Segoe UI";
+
+labels.forEach((label,i)=>{
+ctx.fillText(label, 80 + i*80, 280);
+});
+
+// Chart line
+ctx.beginPath();
+ctx.strokeStyle = "#00c896";
+ctx.lineWidth = 3;
+
+moodData.forEach((value,i)=>{
+let x = 80 + i*80;
+let y = 260 - (value * progress / 100);
+
+if(i === 0){
+ctx.moveTo(x,y);
+}else{
+ctx.lineTo(x,y);
+}
+});
+
+ctx.stroke();
+}
+
+// Animate chart
+function animateChart(){
+progress += 2;
+if(progress <= 100){
+drawChart();
+requestAnimationFrame(animateChart);
+}
+}
+
+animateChart();
+
+</script>
+
+</body>
+</html>

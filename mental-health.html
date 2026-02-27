@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mental Health Check - Mind Mudra</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
+
+body{
+min-height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+background:linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.75)),
+url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee");
+background-size:cover;
+background-position:center;
+color:white;
+}
+
+/* Navbar */
+nav{
+width:100%;
+display:flex;
+justify-content:space-between;
+padding:20px 40px;
+}
+
+.logo{
+font-size:24px;
+font-weight:bold;
+}
+
+nav button{
+padding:8px 18px;
+border:none;
+border-radius:20px;
+background:#00c896;
+color:white;
+cursor:pointer;
+}
+
+/* Container */
+.container{
+margin-top:40px;
+width:90%;
+max-width:700px;
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(12px);
+padding:40px;
+border-radius:20px;
+text-align:center;
+animation:fadeUp 1s ease;
+}
+
+h1{
+margin-bottom:10px;
+}
+
+p{
+opacity:0.9;
+margin-bottom:20px;
+}
+
+/* Mood buttons */
+.moods{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:10px;
+margin-bottom:20px;
+}
+
+.moods button{
+background:#ffffff22;
+border:none;
+padding:10px 18px;
+border-radius:20px;
+cursor:pointer;
+color:white;
+transition:0.3s;
+}
+
+.moods button:hover{
+background:#00c896;
+}
+
+/* Input */
+textarea{
+width:100%;
+height:100px;
+border:none;
+border-radius:10px;
+padding:10px;
+margin-top:10px;
+resize:none;
+}
+
+/* Analyze button */
+.analyze{
+margin-top:20px;
+padding:12px 25px;
+border:none;
+border-radius:25px;
+background:#00c896;
+font-size:16px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.analyze:hover{
+transform:scale(1.05);
+}
+
+/* Result box */
+.result{
+margin-top:30px;
+background:rgba(0,0,0,0.3);
+padding:20px;
+border-radius:15px;
+display:none;
+animation:fadeUp 0.8s ease;
+}
+
+/* Animations */
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:translateY(30px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="logo">Mind Mudra</div>
+<button onclick="goBack()">Dashboard</button>
+</nav>
+
+<div class="container">
+
+<h1>Mental Health Check</h1>
+<p>Tell us how you're feeling today.</p>
+
+<!-- Quick Mood Buttons -->
+<div class="moods">
+<button onclick="selectMood('stressed')">Stressed</button>
+<button onclick="selectMood('anxious')">Anxious</button>
+<button onclick="selectMood('tired')">Tired</button>
+<button onclick="selectMood('sad')">Sad</button>
+<button onclick="selectMood('overthinking')">Overthinking</button>
+</div>
+
+<textarea id="userInput" placeholder="Describe how you are feeling..."></textarea>
+
+<button class="analyze" onclick="analyzeMood()">Analyze My Mood</button>
+
+<div class="result" id="resultBox">
+<h2>Your Wellness Plan</h2>
+<p id="recommendation"></p>
+
+<button class="analyze" onclick="startYoga()">Start Yoga Session</button>
+</div>
+
+</div>
+
+<script>
+
+function goBack(){
+window.location.href = "dashboard.html";
+}
+
+function selectMood(mood){
+document.getElementById("userInput").value = "I feel " + mood;
+}
+
+function analyzeMood(){
+let text = document.getElementById("userInput").value.toLowerCase();
+let result = "";
+
+if(text.includes("stress")){
+result = `
+Breathing Exercise: Box Breathing (5 minutes)<br>
+Yoga: Child Pose, Forward Fold<br>
+Meditation: Calm Mind Meditation
+`;
+}
+else if(text.includes("anxious")){
+result = `
+Breathing: Anulom Vilom<br>
+Yoga: Tree Pose, Mountain Pose<br>
+Meditation: Anxiety Relief Meditation
+`;
+}
+else if(text.includes("tired")){
+result = `
+Breathing: Deep Belly Breathing<br>
+Yoga: Gentle Stretch Yoga<br>
+Meditation: Energy Boost Meditation
+`;
+}
+else if(text.includes("sad")){
+result = `
+Breathing: Slow Breathing<br>
+Yoga: Heart Opening Yoga<br>
+Meditation: Self Compassion Meditation
+`;
+}
+else{
+result = `
+Breathing: Relaxation Breathing<br>
+Yoga: Sukhasana Meditation Pose<br>
+Meditation: 5-Minute Mindfulness
+`;
+}
+
+document.getElementById("recommendation").innerHTML = result;
+document.getElementById("resultBox").style.display = "block";
+}
+
+function startYoga(){
+window.location.href = "yoga-session.html";
+}
+
+</script>
+
+</body>
+</html>

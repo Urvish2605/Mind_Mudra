@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergency Help - Mind Mudra</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
+
+body{
+min-height:100vh;
+background:linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.85)),
+url("https://images.unsplash.com/photo-1499209974431-9dddcece7f88");
+background-size:cover;
+background-position:center;
+color:white;
+}
+
+/* Navbar */
+nav{
+display:flex;
+justify-content:space-between;
+padding:20px 40px;
+}
+
+.logo{
+font-size:24px;
+font-weight:bold;
+}
+
+nav button{
+padding:8px 18px;
+border:none;
+border-radius:20px;
+background:#00c896;
+color:white;
+cursor:pointer;
+}
+
+/* Container */
+.container{
+padding:40px 10%;
+text-align:center;
+animation:fadeUp 1s ease;
+}
+
+h1{
+margin-bottom:10px;
+}
+
+p{
+opacity:0.9;
+margin-bottom:30px;
+}
+
+/* Helpline cards */
+.helplines{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+margin-bottom:40px;
+}
+
+.card{
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(10px);
+padding:25px;
+border-radius:15px;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 15px 30px rgba(0,0,0,0.4);
+}
+
+.card h2{
+margin-bottom:10px;
+}
+
+.call-btn{
+margin-top:15px;
+padding:10px 20px;
+border:none;
+border-radius:20px;
+background:#ff4d6d;
+color:white;
+cursor:pointer;
+transition:0.3s;
+}
+
+.call-btn:hover{
+transform:scale(1.05);
+}
+
+/* Calm section */
+.calm{
+background:rgba(255,255,255,0.12);
+padding:30px;
+border-radius:20px;
+margin-top:30px;
+}
+
+.breathe{
+font-size:28px;
+margin-top:20px;
+animation:breathe 4s infinite;
+}
+
+@keyframes breathe{
+0%{transform:scale(1);}
+50%{transform:scale(1.2);}
+100%{transform:scale(1);}
+}
+
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:translateY(30px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<div class="logo">Mind Mudra</div>
+<button onclick="goDashboard()">Dashboard</button>
+</nav>
+
+<div class="container">
+
+<h1>Emergency Support</h1>
+<p>If you are feeling overwhelmed, help is available. You are not alone.</p>
+
+<div class="helplines">
+
+<div class="card">
+<h2>Kiran Helpline</h2>
+<p>24/7 Government Mental Health Support</p>
+<p><b>1800-599-0019</b></p>
+<button class="call-btn" onclick="callNumber('18005990019')">
+Call Now
+</button>
+</div>
+
+<div class="card">
+<h2>AASRA</h2>
+<p>Suicide Prevention & Emotional Support</p>
+<p><b>91-9820466726</b></p>
+<button class="call-btn" onclick="callNumber('919820466726')">
+Call Now
+</button>
+</div>
+
+<div class="card">
+<h2>Immediate Support</h2>
+<p>Talk to a trusted friend, family member, or counselor.</p>
+<button class="call-btn" onclick="openChat()">
+Start Chat Support
+</button>
+</div>
+
+</div>
+
+<div class="calm">
+<h2>Calming Exercise</h2>
+<p>Follow the breathing circle below.</p>
+<div class="breathe">Breathe In • Breathe Out</div>
+</div>
+
+</div>
+
+<script>
+
+function goDashboard(){
+window.location.href = "dashboard.html";
+}
+
+function callNumber(number){
+window.location.href = "tel:" + number;
+}
+
+function openChat(){
+alert("Connecting to support...");
+}
+
+</script>
+
+</body>
+</html>
