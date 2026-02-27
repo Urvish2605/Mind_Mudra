@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sign Up — Mind Mudra</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--primary:#00c896;--dark:#0a0e27;--muted:#6c757d}
+    *{box-sizing:border-box}
+    body{font-family:'Poppins',sans-serif;margin:0;background:#f6fbfb;color:var(--dark);-webkit-font-smoothing:antialiased}
+    .container{max-width:980px;margin:40px auto;padding:24px}
+    .card{background:#fff;border-radius:14px;padding:28px;box-shadow:0 8px 30px rgba(18,38,63,0.06)}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .brand{font-weight:800;font-size:20px;background:linear-gradient(135deg,var(--primary),#9333ea);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .subtitle{color:var(--muted);font-size:14px}
+    .grid{display:grid;grid-template-columns:1fr 420px;gap:28px}
+    @media(max-width:880px){.grid{grid-template-columns:1fr}}
+
+    /* Google button */
+    .google-btn{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;background:#fff;border:1px solid #e6e9ee;cursor:pointer;font-weight:700}
+    .google-btn svg{width:20px;height:20px}
+    .google-btn:hover{box-shadow:0 8px 30px rgba(0,0,0,0.08);transform:translateY(-2px)}
+
+    form{display:flex;flex-direction:column;gap:12px}
+    input{padding:12px 14px;border-radius:10px;border:1px solid #e6e9ee;font-size:15px}
+    .or{display:flex;align-items:center;gap:12px;margin:8px 0;color:var(--muted);font-weight:600}
+    .or::before,.or::after{content:'';flex:1;height:1px;background:#eef2f5;border-radius:4px}
+    .primary{background:linear-gradient(135deg,var(--primary),#00a878);color:#fff;padding:12px 16px;border-radius:12px;border:none;font-weight:700;cursor:pointer}
+    .primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,200,150,0.18)}
+    .muted{color:var(--muted);font-size:14px}
+    .small{font-size:13px;color:#8b8f95}
+    .center{text-align:center}
+    .footer-cta{margin-top:18px;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <header>
+        <div>
+          <div class="brand">Mind Mudra ✨</div>
+          <div class="subtitle">Sign up and start your wellness journey</div>
+        </div>
+        <div class="small">Already have an account? <a href="login.html">Log in</a></div>
+      </header>
+
+      <div class="grid">
+        <div>
+          <h2 style="margin:0 0 12px 0">Create an account</h2>
+          <p class="muted">Quickly sign up with your Google account or use email to get started.</p>
+
+          <div style="margin:18px 0">
+            <!-- Google sign-in (frontend placeholder) -->
+            <button id="googleSignIn" class="google-btn" aria-label="Continue with Google">
+              <!-- Google G icon -->
+              <svg viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path fill="#4285f4" d="M533.5 278.4c0-18.5-1.5-36.3-4.4-53.6H272v101.4h147.1c-6.3 34.4-25.4 63.6-54.1 83v68h87.4c51-47 80.1-116.2 80.1-198.8z"/>
+                <path fill="#34a853" d="M272 544.3c73.7 0 135.6-24.5 180.8-66.6l-87.4-68c-24.3 16.3-55.7 25.9-93.4 25.9-71.8 0-132.6-48.5-154.4-113.6H30.2v71.3C75.7 485.6 168 544.3 272 544.3z"/>
+                <path fill="#fbbc04" d="M117.6 327.9c-10.9-32.9-10.9-68.6 0-101.5V155.1H30.2c-39 76.7-39 167.2 0 243.9l87.4-71.1z"/>
+                <path fill="#ea4335" d="M272 108.1c39.9 0 75.7 13.8 104 40.9l78-78C407.6 24.5 345.6 0 272 0 168 0 75.7 58.7 30.2 155.1l87.4 71.3C139.4 156.6 200.2 108.1 272 108.1z"/>
+              </svg>
+              Continue with Google
+            </button>
+
+            <div class="or" style="margin-top:14px">OR</div>
+          </div>
+
+          <form id="signupForm">
+            <input id="fullName" type="text" placeholder="Full name" required />
+            <input id="email" type="email" placeholder="Email address" required />
+            <input id="password" type="password" placeholder="Password (8+ characters)" minlength="8" required />
+            <button type="submit" class="primary">Create account</button>
+          </form>
+
+          <div class="footer-cta small">By continuing you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</div>
+        </div>
+
+        <aside>
+          <div style="padding:18px;background:linear-gradient(180deg,#f8fff9, #ffffff);border-radius:10px;border:1px solid #edf7f3">
+            <h3 style="margin-top:0">Why sign up with Google?</h3>
+            <ul style="margin:12px 0 0 18px;color:var(--muted)">
+              <li>One-tap sign-in — no passwords to remember</li>
+              <li>Sync progress across devices automatically</li>
+              <li>Secure authentication backed by Google</li>
+            </ul>
+            <div style="margin-top:18px">
+              <strong>Tip:</strong> Google sign-in is the fastest way to get started.
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // NOTE: This is a frontend placeholder for the Google sign-in button.
+    // To enable real Google OAuth you must create credentials in Google Cloud Console
+    // and implement an OAuth flow (recommended: using your backend to exchange codes securely).
+
+    document.getElementById('googleSignIn').addEventListener('click', () => {
+      // Example OAuth endpoint. Replace CLIENT_ID and REDIRECT_URI with your values.
+      const clientId = 'YOUR_GOOGLE_CLIENT_ID';
+      const redirectUri = 'YOUR_REDIRECT_URI';
+      const scope = encodeURIComponent('profile email');
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scope}`;
+
+      // If you don't have a backend yet, we show an explanatory message.
+      if (clientId === 'YOUR_GOOGLE_CLIENT_ID') {
+        alert('This button is a placeholder. Replace CLIENT_ID and REDIRECT_URI in signup.html to perform a real Google sign-in, or implement a backend OAuth flow.');
+      } else {
+        window.location.href = authUrl;
+      }
+    });
+
+    // Basic form submit (placeholder) — replace with real signup API call.
+    document.getElementById('signupForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      if (!name || !email) return alert('Please fill in all fields.');
+      alert('Thanks for signing up, ' + name + '! This is a demo signup. Implement backend registration to store users.');
+      window.location.href = 'home (2).html';
+    });
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up - Mind Mudra</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    font-family:Segoe UI;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
+    url("https://images.unsplash.com/photo-1506126613408-eca07ce68773");
+    background-size:cover;
+    color:white;
+}
+
+.container{
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(15px);
+    padding:40px;
+    border-radius:15px;
+    width:380px;
+    text-align:center;
+    animation:fadeUp 1s ease;
+}
+
+h1{
+    margin-bottom:20px;
+}
+
+input, select{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:8px;
+    outline:none;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    background:#00c896;
+    color:white;
+    font-size:16px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+a{
+    color:#00ffd5;
+    text-decoration:none;
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>Create Account</h1>
+
+<form onsubmit="signupUser(event)">
+<input type="text" placeholder="Full Name" required>
+<input type="email" placeholder="Email" required>
+<input type="password" placeholder="Password" required>
+
+<select required>
+<option value="">Select Language</option>
+<option>English</option>
+<option>Hindi</option>
+<option>Marathi</option>
+<option>Gujarati</option>
+<option>Tamil</option>
+</select>
+
+<button type="submit">Sign Up</button>
+</form>
+
+<p style="margin-top:15px;">
+Already have an account?
+<a href="login.html">Login</a>
+</p>
+
+</div>
+
+<script>
+function signupUser(event){
+    event.preventDefault();
+    alert("Account created successfully!");
+    window.location.href = "dashboard.html";
+}
+</script>
+
+</body>
+</html>
