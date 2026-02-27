@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mind Mudra</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:#f7f4ff;
+}
+
+/* NAVBAR */
+nav{
+  position:fixed;
+  top:0;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 60px;
+  transition:0.3s;
+  z-index:1000;
+}
+
+nav.scrolled{
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(15px);
+}
+
+.logo{
+  font-size:22px;
+  font-weight:600;
+}
+
+nav ul{
+  display:flex;
+  list-style:none;
+  gap:30px;
+}
+
+nav a{
+  text-decoration:none;
+  color:#444;
+}
+
+.signin-btn{
+  padding:10px 20px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(135deg,#a6c8ff,#cbb3ff);
+  cursor:pointer;
+}
+
+/* HERO */
+.hero{
+  height:100vh;
+  background:url("https://images.unsplash.com/photo-1506744038136-46273834b3fb") center/cover no-repeat fixed;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  position:relative;
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.35);
+}
+
+.hero-content{
+  position:relative;
+  color:white;
+  max-width:700px;
+}
+
+.hero h1{
+  font-size:3.5rem;
+  margin-bottom:20px;
+}
+
+.hero p{
+  font-size:1.2rem;
+  margin-bottom:30px;
+}
+
+.start-btn{
+  padding:15px 35px;
+  border:none;
+  border-radius:40px;
+  font-size:1.1rem;
+  cursor:pointer;
+  background:linear-gradient(135deg,#cbb3ff,#b8d8ff);
+}
+
+/* FEATURES */
+.features{
+  padding:80px 10%;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:30px;
+}
+
+.card{
+  background:white;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:translateY(-8px);
+}
+
+/* ABOUT */
+.about{
+  height:90vh;
+  background:url("https://images.unsplash.com/photo-1506126613408-eca07ce68773") center/cover no-repeat;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+
+.about::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+}
+
+.about-content{
+  position:relative;
+  color:white;
+  text-align:center;
+  max-width:700px;
+}
+
+/* MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-box{
+  background:white;
+  padding:40px;
+  border-radius:20px;
+  width:320px;
+  text-align:center;
+}
+
+.modal input{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
+
+/* MUSIC BUTTON */
+.music-btn{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:white;
+  border:none;
+  padding:12px;
+  border-radius:50%;
+  cursor:pointer;
+  box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+@media(max-width:768px){
+  nav{
+    padding:15px 20px;
+  }
+  .hero h1{
+    font-size:2.3rem;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="logo">Mind Mudra</div>
+  <ul>
+    <li><a href="#">Home</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <button class="signin-btn" onclick="openModal()">Sign In</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Let’s Align Your Mind</h1>
+    <p>Take a moment to understand yourself before starting your wellness journey.</p>
+    <button class="start-btn">Start Check-In</button>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="card">
+    <h3>Emotion Detection</h3>
+    <p>Understand your mental state with interactive check-ins.</p>
+  </div>
+  <div class="card">
+    <h3>Yoga Recommendations</h3>
+    <p>Personalized yoga practices based on your mood.</p>
+  </div>
+  <div class="card">
+    <h3>Calm Experience</h3>
+    <p>Soft visuals and soothing design for mental comfort.</p>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-content">
+    <h2>About Us</h2>
+    <p>
+      Mind Check-In helps you pause, reflect, and reconnect with yourself
+      before starting yoga practices designed for your emotional wellbeing.
+    </p>
+  </div>
+</section>
+
+<!-- SIGN IN MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>Sign In</h2>
+    <input type="text" placeholder="Email">
+    <input type="password" placeholder="Password">
+    <button class="signin-btn">Login</button>
+    <br><br>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<!-- MUSIC -->
+<button class="music-btn" onclick="toggleMusic()">🎵</button>
+<audio id="music" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// Navbar scroll effect
+window.addEventListener("scroll", () => {
+  document.getElementById("navbar").classList.toggle(
+    "scrolled",
+    window.scrollY > 50
+  );
+});
+
+// Modal
+function openModal(){
+  document.getElementById("modal").style.display="flex";
+}
+
+function closeModal(){
+  document.getElementById("modal").style.display="none";
+}
+
+// Music toggle
+let playing=false;
+function toggleMusic(){
+  const music=document.getElementById("music");
+  if(!playing){
+    music.play();
+    playing=true;
+  }else{
+    music.pause();
+    playing=false;
+  }
+}
+</script>
+
+</body>
+</html>
