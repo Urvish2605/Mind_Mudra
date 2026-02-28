@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inner State · Yoga Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════ */
+:root {
+  --bg:           #0b1412;
+  --surface:      rgba(255,255,255,0.08);
+  --surface2:     rgba(255,255,255,0.05);
+  --border:       rgba(255,255,255,0.15);
+  --border-soft:  rgba(255,255,255,0.09);
+  --primary:      #00c896;
+  --accent:       #00ffd5;
+  --primary-soft: rgba(0,200,150,0.18);
+  --accent-soft:  rgba(0,255,213,0.10);
+  --text:         #ffffff;
+  --muted:        rgba(255,255,255,0.62);
+  --muted2:       rgba(255,255,255,0.40);
+  --shadow:       rgba(0,0,0,0.40);
+  --radius:       14px;
+  --radius-sm:    8px;
+}
+
+/* ══════════════════════════════════════
+   BASE RESET
+══════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: var(--text);
+  background:
+    linear-gradient(rgba(0,0,0,0.62), rgba(11,20,18,0.85)),
+    url("https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1400&q=80") center/cover no-repeat fixed;
+}
+
+/* ══════════════════════════════════════
+   AMBIENT ORBS
+══════════════════════════════════════ */
+.ambient { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+.ambient-orb {
+  position:absolute; border-radius:50%; filter:blur(100px); opacity:0.14;
+  animation:drift 20s ease-in-out infinite alternate;
+}
+.orb1 { width:min(600px,90vw); height:min(600px,90vw); background:#00c896; top:-200px; left:-100px; }
+.orb2 { width:min(400px,70vw); height:min(400px,70vw); background:#00ffd5; bottom:-100px; right:-50px; animation-delay:-8s; }
+.orb3 { width:min(300px,60vw); height:min(300px,60vw); background:#00c896; top:40%; left:60%; animation-delay:-14s; }
+@keyframes drift {
+  from { transform:translate(0,0) scale(1); }
+  to   { transform:translate(40px,30px) scale(1.08); }
+}
+
+/* ══════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════ */
+#app {
+  position:relative; z-index:1;
+  min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding: clamp(24px,5vw,60px) clamp(16px,5vw,24px);
+  gap: 0;
+}
+
+/* ══════════════════════════════════════
+   SCREENS
+══════════════════════════════════════ */
+.screen {
+  display:none; flex-direction:column; align-items:center;
+  max-width:600px; width:100%;
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(28px,6vw,48px) clamp(20px,6vw,44px);
+  box-shadow: 0 24px 64px var(--shadow);
+  animation: fadeUp 0.5s ease forwards; opacity:0;
+}
+.screen.active { display:flex; }
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ══════════════════════════════════════
+   WELCOME SCREEN
+══════════════════════════════════════ */
+.lotus-icon {
+  width:64px; height:64px; margin-bottom:20px;
+  filter:drop-shadow(0 0 16px rgba(0,200,150,0.5));
+}
+
+.title-main {
+  font-family:'Playfair Display', serif;
+  font-size: clamp(2rem,6vw,3rem);
+  font-weight:600; text-align:center; line-height:1.2;
+  letter-spacing:0.01em;
+}
+.title-main em { font-style:italic; color:var(--primary); }
+
+.subtitle {
+  font-size:clamp(0.68rem,2vw,0.8rem);
+  letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--accent); margin-top:10px; margin-bottom:28px; text-align:center;
+}
+
+.divider {
+  width:56px; height:2px;
+  background:linear-gradient(90deg, transparent, var(--primary), transparent);
+  margin:20px auto;
+}
+
+.intro-text {
+  font-size:clamp(0.85rem,2.5vw,0.94rem);
+  line-height:1.85; color:var(--muted); text-align:center; max-width:400px;
+}
+
+/* ══════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════ */
+.btn-primary {
+  margin-top:36px; padding:14px 48px;
+  background:linear-gradient(135deg, #00c896, #00ffd5);
+  border:none; color:#0b1412;
+  font-family:'Inter',sans-serif; font-weight:600;
+  font-size:0.8rem; letter-spacing:0.15em; text-transform:uppercase;
+  cursor:pointer; border-radius:var(--radius-sm);
+  transition:all 0.3s ease;
+  box-shadow:0 6px 20px rgba(0,200,150,0.35);
+}
+.btn-primary:hover {
+  transform:scale(1.04) translateY(-1px);
+  box-shadow:0 12px 32px rgba(0,200,150,0.50);
+}
+.btn-primary:active { transform:scale(0.98); }
+
+/* ══════════════════════════════════════
+   PROGRESS
+══════════════════════════════════════ */
+.progress-wrap {
+  width:100%; max-width:560px; margin-bottom:28px;
+  display:flex; align-items:center; gap:12px;
+}
+.progress-bar {
+  flex:1; height:5px; background:rgba(255,255,255,0.12);
+  border-radius:10px; overflow:hidden;
+}
+.progress-fill {
+  height:100%; background:linear-gradient(90deg, #00c896, #00ffd5);
+  transition:width 0.6s cubic-bezier(0.4,0,0.2,1); width:0%;
+  border-radius:10px;
+}
+.progress-label { font-size:0.7rem; letter-spacing:0.12em; color:var(--muted2); white-space:nowrap; }
+
+/* ══════════════════════════════════════
+   DOTS
+══════════════════════════════════════ */
+.dots { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; justify-content:center; }
+.dot { width:7px; height:7px; border-radius:50%; background:var(--border-soft); transition:all 0.3s ease; }
+.dot.active { background:var(--primary); transform:scale(1.5); box-shadow:0 0 8px rgba(0,200,150,0.6); }
+.dot.done   { background:var(--accent); }
+
+/* ══════════════════════════════════════
+   QUESTION CARD
+══════════════════════════════════════ */
+.q-card {
+  width:100%;
+  background:var(--surface2);
+  border:1px solid var(--border-soft);
+  padding:clamp(22px,5vw,36px) clamp(18px,5vw,32px);
+  border-radius:var(--radius);
+  position:relative;
+}
+.q-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--primary) 50%, transparent);
+  border-radius:var(--radius) var(--radius) 0 0;
+}
+
+.q-number {
+  font-size:0.65rem; letter-spacing:0.25em; text-transform:uppercase;
+  color:var(--primary); margin-bottom:14px; font-weight:500;
+}
+.q-text {
+  font-family:'Playfair Display', serif;
+  font-size:clamp(1.1rem,3.5vw,1.4rem); font-weight:400;
+  line-height:1.5; margin-bottom:24px; color:#fff;
+}
+
+/* ══════════════════════════════════════
+   OPTIONS
+══════════════════════════════════════ */
+.options { display:flex; flex-direction:column; gap:9px; }
+.opt {
+  padding:12px 16px; background:rgba(255,255,255,0.04);
+  border:1px solid var(--border-soft); border-radius:var(--radius-sm);
+  color:var(--muted); font-family:'Inter',sans-serif;
+  font-size:clamp(0.8rem,2.5vw,0.88rem); font-weight:300; text-align:left;
+  cursor:pointer; transition:all 0.22s ease; position:relative; overflow:hidden;
+}
+.opt:hover {
+  border-color:var(--primary); background:var(--primary-soft);
+  color:#fff; transform:translateX(5px);
+}
+.opt.selected {
+  border-color:var(--primary); background:var(--primary-soft);
+  color:var(--primary);
+}
+
+/* ══════════════════════════════════════
+   VOLUME SLIDER
+══════════════════════════════════════ */
+.volume-wrap { display:flex; flex-direction:column; gap:20px; }
+
+.volume-zone-labels {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:6px;
+}
+@media(max-width:480px) { .volume-zone-labels { grid-template-columns:repeat(2,1fr); } }
+
+.vzone {
+  font-size:clamp(0.56rem,1.8vw,0.63rem);
+  letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--muted2); text-align:center;
+  padding:6px 4px 5px; border:1px solid var(--border-soft);
+  border-radius:var(--radius-sm); transition:all 0.25s ease; line-height:1.3;
+  background:rgba(255,255,255,0.03);
+}
+.vzone.active-zone {
+  border-color:var(--primary); color:var(--primary);
+  background:var(--primary-soft);
+  box-shadow:0 0 12px rgba(0,200,150,0.2);
+}
+
+.slider-row { position:relative; padding:10px 0; }
+.slider-track {
+  position:absolute; top:50%; left:0; right:0; height:5px;
+  transform:translateY(-50%); border-radius:4px;
+  background:rgba(255,255,255,0.12); overflow:hidden;
+}
+.slider-track-fill {
+  height:100%; width:0%; border-radius:4px;
+  background:linear-gradient(90deg, #00c896, #00ffd5);
+  transition:width 0.05s;
+}
+.slider-zone-dividers {
+  position:absolute; top:50%; left:0; right:0; height:5px;
+  transform:translateY(-50%); pointer-events:none;
+}
+.slider-zone-dividers span {
+  position:absolute; top:0; width:2px; height:100%;
+  background:var(--bg); opacity:0.7;
+}
+
+.volume-slider {
+  -webkit-appearance:none; appearance:none;
+  width:100%; height:5px; cursor:pointer; outline:none;
+  background:transparent; position:relative; z-index:2;
+}
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; appearance:none;
+  width:22px; height:22px; border-radius:50%;
+  background:linear-gradient(135deg, #00c896, #00ffd5);
+  cursor:pointer; border:2px solid #0b1412;
+  box-shadow:0 0 10px rgba(0,200,150,0.5);
+  transition:transform 0.15s, box-shadow 0.15s;
+}
+.volume-slider::-moz-range-thumb {
+  width:22px; height:22px; border-radius:50%;
+  background:linear-gradient(135deg, #00c896, #00ffd5);
+  cursor:pointer; border:2px solid #0b1412;
+}
+.volume-slider::-webkit-slider-thumb:hover {
+  transform:scale(1.2);
+  box-shadow:0 0 18px rgba(0,200,150,0.7);
+}
+
+.volume-value-row {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; margin-top:4px;
+}
+.volume-pct {
+  font-family:'Playfair Display',serif;
+  font-size:2.4rem; font-weight:400; color:var(--primary); line-height:1; flex-shrink:0;
+}
+.volume-zone-desc {
+  font-size:clamp(0.75rem,2.5vw,0.85rem); color:var(--muted);
+  text-align:right; line-height:1.5; max-width:60%;
+}
+
+.volume-confirm {
+  margin-top:4px; padding:11px 32px; align-self:flex-start;
+  background:linear-gradient(135deg, #00c896, #00ffd5);
+  border:none; color:#0b1412; font-family:'Inter',sans-serif;
+  font-weight:600; font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase;
+  cursor:pointer; border-radius:var(--radius-sm);
+  transition:all 0.25s ease;
+  box-shadow:0 4px 14px rgba(0,200,150,0.3);
+}
+.volume-confirm:hover {
+  transform:scale(1.04);
+  box-shadow:0 8px 22px rgba(0,200,150,0.45);
+}
+
+/* ══════════════════════════════════════
+   IMAGE REACTION TEST
+══════════════════════════════════════ */
+.imgtest-wrap { display:flex; flex-direction:column; gap:14px; }
+.imgtest-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.imgtest-instruction {
+  font-size:clamp(0.74rem,2.5vw,0.82rem); color:var(--muted);
+  line-height:1.6;
+}
+.imgtest-instruction em { color:var(--primary); font-style:italic; }
+.imgtest-countdown {
+  font-size:0.72rem; letter-spacing:0.15em; text-transform:uppercase;
+  color:var(--primary); white-space:nowrap; padding-top:2px; flex-shrink:0;
+  font-weight:500;
+}
+
+.scene-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.scene-card {
+  position:relative; height:clamp(110px,22vw,150px);
+  cursor:pointer; overflow:hidden; border:1px solid var(--border-soft);
+  border-radius:var(--radius-sm);
+  transition:transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  user-select:none;
+}
+.scene-card:hover { transform:scale(1.03); border-color:rgba(0,200,150,0.5); }
+.scene-card.selected {
+  border-color:var(--primary) !important;
+  box-shadow:0 0 20px rgba(0,200,150,0.4);
+  transform:scale(1.03);
+}
+.scene-card.dimmed { opacity:0.28; pointer-events:none; transition:opacity 0.4s ease; }
+.scene-canvas { width:100%; height:100%; display:block; }
+.scene-label {
+  position:absolute; bottom:0; left:0; right:0; padding:5px 9px;
+  background:linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  font-size:0.58rem; letter-spacing:0.14em; text-transform:uppercase;
+  color:rgba(255,255,255,0.7); border-radius:0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.imgtest-result {
+  display:none; flex-direction:column; gap:10px;
+  padding:14px 0 4px; border-top:1px solid var(--border-soft);
+  animation:fadeUp 0.4s ease forwards;
+}
+.imgtest-result.show { display:flex; }
+.result-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.result-badge {
+  font-size:0.6rem; letter-spacing:0.14em; text-transform:uppercase;
+  padding:4px 10px; border:1px solid; border-radius:4px; white-space:nowrap;
+  font-weight:500;
+}
+.badge-img  { border-color:var(--primary); color:var(--primary); }
+.badge-time { border-color:var(--accent);  color:var(--accent); }
+.result-explain { font-size:0.77rem; color:var(--muted); line-height:1.5; }
+
+.imgtest-continue {
+  margin-top:6px; padding:10px 28px; align-self:flex-start;
+  background:linear-gradient(135deg, #00c896, #00ffd5);
+  border:none; color:#0b1412; font-family:'Inter',sans-serif;
+  font-weight:600; font-size:0.74rem; letter-spacing:0.14em; text-transform:uppercase;
+  cursor:pointer; border-radius:var(--radius-sm);
+  transition:all 0.25s ease;
+}
+.imgtest-continue:hover { transform:scale(1.04); box-shadow:0 6px 18px rgba(0,200,150,0.4); }
+
+/* ══════════════════════════════════════
+   RESULTS SCREEN
+══════════════════════════════════════ */
+#results-screen { max-width:620px; }
+
+.result-header { text-align:center; margin-bottom:32px; width:100%; }
+.state-label {
+  font-size:0.62rem; letter-spacing:0.3em; text-transform:uppercase;
+  color:var(--accent); display:block; margin-bottom:10px; font-weight:500;
+}
+.state-name {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.8rem,5.5vw,2.8rem); font-weight:600; color:#fff;
+}
+.state-name em { font-style:italic; color:var(--primary); }
+.state-desc {
+  font-size:clamp(0.82rem,2.5vw,0.9rem); line-height:1.82; color:var(--muted);
+  text-align:center; max-width:480px; margin:14px auto 0;
+}
+
+/* Score bars */
+.score-grid { display:grid; grid-template-columns:1fr; gap:14px; margin:28px 0; width:100%; }
+.score-row { display:grid; grid-template-columns:clamp(110px,30%,150px) 1fr 38px; align-items:center; gap:10px; }
+.score-name { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted2); }
+.score-bar { height:6px; background:rgba(255,255,255,0.12); border-radius:10px; overflow:hidden; }
+.score-bar-fill {
+  height:100%; border-radius:10px;
+  transition:width 1s cubic-bezier(0.4,0,0.2,1) 0.3s; width:0%;
+  background:linear-gradient(90deg, #00c896, #00ffd5);
+}
+.score-pct { font-size:0.68rem; color:var(--muted2); text-align:right; font-weight:500; }
+
+/* ── Pose Recommendation (single pose) ── */
+.pose-section-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.1rem,3.5vw,1.3rem); font-weight:400;
+  color:#fff; text-align:center; margin-bottom:20px; width:100%;
+}
+.pose-section-title em { font-style:italic; color:var(--primary); }
+
+.pose-card-single {
+  width:100%;
+  background:rgba(0,200,150,0.07);
+  border:1px solid rgba(0,200,150,0.30);
+  border-radius:var(--radius);
+  padding:clamp(24px,5vw,36px);
+  position:relative; overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,200,150,0.12);
+}
+.pose-card-single::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--primary), var(--accent), transparent);
+}
+
+/* Glow orb inside card */
+.pose-card-single::after {
+  content:''; position:absolute; bottom:-60px; right:-60px;
+  width:200px; height:200px; border-radius:50%;
+  background:radial-gradient(circle, rgba(0,200,150,0.12) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+.pose-card-inner { display:flex; gap:clamp(16px,4vw,28px); align-items:flex-start; position:relative; z-index:1; }
+
+.pose-visual {
+  flex-shrink:0; width:clamp(72px,20vw,100px); height:clamp(72px,20vw,100px);
+  border-radius:50%; background:rgba(0,200,150,0.12);
+  border:2px solid rgba(0,200,150,0.3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:clamp(2rem,6vw,2.6rem);
+}
+
+.pose-info { flex:1; min-width:0; }
+.pose-sanskrit-tag {
+  display:inline-block; padding:3px 10px; margin-bottom:10px;
+  background:rgba(0,200,150,0.15); border:1px solid rgba(0,200,150,0.3);
+  border-radius:4px;
+  font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--primary); font-weight:500;
+}
+.pose-name-big {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.3rem,4vw,1.7rem); font-weight:600; color:#fff;
+  margin-bottom:10px; line-height:1.2;
+}
+.pose-desc-text {
+  font-size:clamp(0.8rem,2.5vw,0.88rem); line-height:1.7; color:var(--muted);
+}
+
+.pose-steps {
+  margin-top:18px; display:flex; flex-direction:column; gap:8px;
+}
+.pose-step {
+  display:flex; gap:10px; align-items:flex-start;
+  font-size:clamp(0.77rem,2.4vw,0.84rem); color:var(--muted); line-height:1.5;
+}
+.pose-step-num {
+  flex-shrink:0; width:22px; height:22px; border-radius:50%;
+  background:rgba(0,200,150,0.18); border:1px solid rgba(0,200,150,0.35);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.62rem; color:var(--primary); font-weight:600; margin-top:1px;
+}
+
+/* benefit chips */
+.pose-benefits {
+  display:flex; flex-wrap:wrap; gap:6px; margin-top:16px;
+}
+.benefit-chip {
+  padding:4px 12px; border-radius:20px;
+  background:rgba(0,255,213,0.08); border:1px solid rgba(0,255,213,0.2);
+  font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--accent); font-weight:500;
+}
+
+/* ── Workout CTA ── */
+.workout-cta-wrap {
+  width:100%; margin-top:32px; padding:clamp(20px,4vw,28px);
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius);
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+  position:relative; text-align:center;
+}
+.workout-cta-wrap::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, #00c896 30%, #00ffd5 70%, transparent);
+  border-radius:var(--radius) var(--radius) 0 0;
+}
+.workout-cta-label {
+  font-size:0.62rem; letter-spacing:0.25em; text-transform:uppercase;
+  color:var(--accent); font-weight:500;
+}
+.workout-cta-title {
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.1rem,3.5vw,1.4rem); font-weight:600; color:#fff;
+}
+.workout-cta-title em { font-style:italic; color:var(--primary); }
+.workout-cta-desc {
+  font-size:clamp(0.78rem,2.4vw,0.85rem); color:var(--muted); line-height:1.6; max-width:400px;
+}
+.btn-workout {
+  margin-top:4px; padding:13px 44px;
+  background:linear-gradient(135deg, #00c896, #00ffd5);
+  border:none; color:#0b1412;
+  font-family:'Inter',sans-serif; font-weight:700;
+  font-size:0.8rem; letter-spacing:0.15em; text-transform:uppercase;
+  cursor:pointer; border-radius:var(--radius-sm);
+  text-decoration:none; display:inline-block;
+  transition:all 0.3s ease;
+  box-shadow:0 6px 20px rgba(0,200,150,0.35);
+}
+.btn-workout:hover {
+  transform:translateY(-2px) scale(1.04);
+  box-shadow:0 12px 32px rgba(0,200,150,0.5);
+}
+
+/* ── Restart ── */
+.btn-restart {
+  margin-top:22px; padding:11px 36px; background:transparent;
+  border:1px solid var(--border-soft); color:var(--muted2);
+  font-family:'Inter',sans-serif; font-size:0.72rem;
+  letter-spacing:0.15em; text-transform:uppercase;
+  cursor:pointer; border-radius:var(--radius-sm); transition:all 0.3s ease;
+}
+.btn-restart:hover { border-color:var(--primary); color:var(--primary); }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media(max-width:520px) {
+  .scene-grid { gap:6px; }
+  .score-row { grid-template-columns:80px 1fr 28px; }
+  .pose-card-inner { flex-direction:column; align-items:center; text-align:center; }
+  .pose-info { text-align:center; }
+  .pose-benefits { justify-content:center; }
+  .pose-step { justify-content:flex-start; text-align:left; }
+}
+@media(max-width:360px) {
+  .scene-grid { grid-template-columns:1fr; }
+  .volume-zone-labels { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="ambient">
+  <div class="ambient-orb orb1"></div>
+  <div class="ambient-orb orb2"></div>
+  <div class="ambient-orb orb3"></div>
+</div>
+
+<div id="app">
+
+  <!-- ═══════════ WELCOME ═══════════ -->
+  <div id="welcome-screen" class="screen active">
+    <svg class="lotus-icon" viewBox="0 0 64 64" fill="none">
+      <path d="M32 54C32 54 14 44 14 30C14 22 20 16 28 16C29.4 16 30.7 16.3 32 16.8C33.3 16.3 34.6 16 36 16C44 16 50 22 50 30C50 44 32 54 32 54Z" fill="rgba(0,200,150,0.20)" stroke="#00c896" stroke-width="0.9"/>
+      <path d="M32 54C32 54 20 40 20 28C20 22 24 16 32 12C40 16 44 22 44 28C44 40 32 54 32 54Z" fill="rgba(0,200,150,0.35)" stroke="#00c896" stroke-width="0.9"/>
+      <path d="M32 54C32 54 24 40 32 26C40 40 32 54 32 54Z" fill="rgba(0,255,213,0.55)" stroke="#00ffd5" stroke-width="0.9"/>
+    </svg>
+    <p class="subtitle">Mind Mudra · Inner State</p>
+    <h1 class="title-main">Find your <em>practice</em><br>from within</h1>
+    <div class="divider"></div>
+    <p class="intro-text">A short inner inquiry — 7 questions — to understand your current energy state and recommend the single yoga pose that will serve you most deeply today.</p>
+    <button class="btn-primary" onclick="startQuiz()">Begin Practice</button>
+  </div>
+
+  <!-- ═══════════ QUESTIONS ═══════════ -->
+  <div id="quiz-screen" class="screen">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <span class="progress-label" id="progress-label">1 / 7</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="q-card">
+      <p class="q-number" id="q-number">Question 01</p>
+      <p class="q-text"   id="q-text"></p>
+      <div class="options"           id="options-wrap"></div>
+      <div id="volume-container"     style="display:none"></div>
+      <div id="imgtest-container"    style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ RESULTS ═══════════ -->
+  <div id="results-screen" class="screen">
+    <div class="result-header">
+      <span class="state-label">Your current inner state</span>
+      <h2 class="state-name" id="result-state-name"></h2>
+      <p class="state-desc" id="result-state-desc"></p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Score bars -->
+    <div class="score-grid">
+      <div class="score-row">
+        <span class="score-name">Restless</span>
+        <div class="score-bar"><div class="score-bar-fill" id="bar-hyper"></div></div>
+        <span class="score-pct" id="pct-hyper">0%</span>
+      </div>
+      <div class="score-row">
+        <span class="score-name">Fatigued</span>
+        <div class="score-bar"><div class="score-bar-fill" id="bar-low"></div></div>
+        <span class="score-pct" id="pct-low">0%</span>
+      </div>
+      <div class="score-row">
+        <span class="score-name">Overloaded</span>
+        <div class="score-bar"><div class="score-bar-fill" id="bar-cog"></div></div>
+        <span class="score-pct" id="pct-cog">0%</span>
+      </div>
+      <div class="score-row">
+        <span class="score-name">Centered</span>
+        <div class="score-bar"><div class="score-bar-fill" id="bar-reg"></div></div>
+        <span class="score-pct" id="pct-reg">0%</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Single pose recommendation -->
+    <p class="pose-section-title">Today's <em>Recommended Asana</em></p>
+    <div id="pose-card-container"></div>
+
+    <!-- Workout CTA -->
+    <div id="workout-cta"></div>
+
+    <button class="btn-restart" onclick="restartQuiz()">Begin Again</button>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   STATE
+══════════════════════════════════════ */
+const scores = { hyperarousal:0, lowActivation:0, cognitiveOverload:0, regulated:0 };
+let currentQ = 0;
+let imgTestStartTime = null;
+let imgTestDone      = false;
+let cancelWaveAnim   = null;
+let countupInterval  = null;
+
+/* ══════════════════════════════════════
+   QUESTIONS
+══════════════════════════════════════ */
+const questions = [
+  {
+    id:1,
+    text:"When you sit quietly for 30 seconds, your thoughts feel:",
+    options:[
+      { label:"Racing and hard to control",    scores:{ hyperarousal:2, cognitiveOverload:1 } },
+      { label:"Jumping between many topics",   scores:{ cognitiveOverload:2, hyperarousal:1 } },
+      { label:"Slow and heavy",                scores:{ lowActivation:2 } },
+      { label:"Calm and steady",               scores:{ regulated:3 } },
+    ]
+  },
+  {
+    id:2,
+    text:"After spending time with people, you usually feel:",
+    options:[
+      { label:"More energized",                scores:{ regulated:2 } },
+      { label:"Slightly drained but okay",     scores:{ regulated:1 } },
+      { label:"Completely exhausted",          scores:{ lowActivation:2 } },
+      { label:"Mentally overstimulated",       scores:{ hyperarousal:2, cognitiveOverload:1 } },
+    ]
+  },
+  {
+    id:3,
+    text:"Making small decisions today feels:",
+    options:[
+      { label:"Instant and impulsive",         scores:{ hyperarousal:2 } },
+      { label:"Difficult and slow",            scores:{ lowActivation:2 } },
+      { label:"Overthought and complicated",   scores:{ cognitiveOverload:2 } },
+      { label:"Clear and manageable",          scores:{ regulated:3 } },
+    ]
+  },
+  {
+    id:4,
+    text:"When you woke up this morning, you felt:",
+    options:[
+      { label:"Alert immediately",             scores:{ hyperarousal:2 } },
+      { label:"Groggy and slow",               scores:{ lowActivation:2 } },
+      { label:"Wired but tired",               scores:{ hyperarousal:1, cognitiveOverload:1 } },
+      { label:"Rested and steady",             scores:{ regulated:3 } },
+    ]
+  },
+  {
+    id:5,
+    text:"If your mind had a volume level right now, it would be:",
+    type:'volume'
+  },
+  {
+    id:6,
+    text:"Which part of your body feels most tense right now?",
+    options:[
+      { label:"🧠  Head / temples",            scores:{ cognitiveOverload:2 } },
+      { label:"🫁  Chest / heart area",        scores:{ hyperarousal:2 } },
+      { label:"💪  Shoulders / neck",          scores:{ hyperarousal:1, cognitiveOverload:1 } },
+      { label:"🌀  Stomach / gut",             scores:{ hyperarousal:2 } },
+      { label:"🦵  Legs / lower body",         scores:{ lowActivation:2 } },
+      { label:"😌  No particular tension",     scores:{ regulated:3 } },
+    ]
+  },
+  {
+    id:7,
+    text:"Instinct check — tap the scene that draws your eye first.",
+    type:'imgtest'
+  }
+];
+
+/* ══════════════════════════════════════
+   VOLUME ZONES
+══════════════════════════════════════ */
+const volumeZones = [
+  { min:0,  max:25,  cluster:'regulated',        label:'Clear & Quiet',    desc:'Mind is still. Thoughts settle like water.' },
+  { min:26, max:50,  cluster:'cognitiveOverload', label:'Busy but Unclear', desc:'Many threads running — not all audible.' },
+  { min:51, max:75,  cluster:'lowActivation',     label:'Fuzzy & Dull',     desc:'Static rather than signal. Muted energy.' },
+  { min:76, max:100, cluster:'hyperarousal',      label:'Very Loud',        desc:'Mind is crowded. Hard to hear yourself think.' },
+];
+function getVolumeZone(val) {
+  return volumeZones.find(z => val >= z.min && val <= z.max) || volumeZones[0];
+}
+
+/* ══════════════════════════════════════
+   POSE DATA — one per state
+   Only: Vrikshasana, Bhujangasana, Uttanasana
+══════════════════════════════════════ */
+const poseForState = {
+  hyperarousal: {
+    emoji: '🌿',
+    name: 'Uttanasana',
+    sanskrit: 'Uttanasana · Standing Forward Bend',
+    desc: 'A deep forward fold that immediately activates the parasympathetic nervous system. Inverts the head below the heart, slowing the pulse and quieting an overactive mind.',
+    benefits: ['Calms anxiety', 'Releases neck tension', 'Slows heart rate', 'Grounds energy'],
+    steps: [
+      'Stand with feet hip-width apart, arms at sides. Take three slow breaths.',
+      'Exhale deeply and hinge forward from the hips, keeping your spine long.',
+      'Let your torso hang heavy. Hold opposite elbows or rest hands on the floor.',
+      'Stay for 8–12 slow breaths. Each exhale, release a little further.',
+      'Rise slowly on an inhale, rolling up one vertebra at a time.',
+    ]
+  },
+  lowActivation: {
+    emoji: '🐍',
+    name: 'Bhujangasana',
+    sanskrit: 'Bhujangasana · Cobra Pose',
+    desc: 'A gentle energising backbend that opens the chest, stimulates the kidneys and adrenal glands, and rebuilds vitality from the inside out without overwhelming a depleted system.',
+    benefits: ['Boosts energy', 'Opens chest & lungs', 'Stimulates spine', 'Lifts low mood'],
+    steps: [
+      'Lie face down. Place hands under shoulders, elbows close to body.',
+      'Press the tops of your feet and thighs firmly into the ground.',
+      'Inhale slowly and lift the chest, using your back muscles more than your arms.',
+      'Keep shoulders soft and away from ears. Hold 5–8 breaths.',
+      'Exhale and gently lower. Repeat 3 times, resting in Balasana between rounds.',
+    ]
+  },
+  cognitiveOverload: {
+    emoji: '🌳',
+    name: 'Vrikshasana',
+    sanskrit: 'Vrikshasana · Tree Pose',
+    desc: 'Balance demands complete present-moment focus — there is no room for mental chatter when you must find your centre. Every wobble is a moment of recalibration.',
+    benefits: ['Sharpens focus', 'Quiets mental noise', 'Builds grounding', 'Single-point attention'],
+    steps: [
+      'Stand tall in Tadasana. Fix your gaze on a single still point ahead.',
+      'Shift weight to your left foot. Slowly lift your right foot.',
+      'Place the sole on the inner calf or inner thigh — never on the knee.',
+      'Bring palms together at heart centre. Breathe evenly for 8–10 counts.',
+      'Release and repeat on the other side. Notice how still the mind becomes.',
+    ]
+  },
+  regulated: {
+    emoji: '🌳',
+    name: 'Vrikshasana',
+    sanskrit: 'Vrikshasana · Tree Pose',
+    desc: 'When you are balanced, Tree Pose becomes an exploration of depth rather than effort. Use your steadiness to go further — explore arms reaching overhead, eyes closed, deeper roots.',
+    benefits: ['Deepens balance', 'Builds inner stillness', 'Celebrates steadiness', 'Expands awareness'],
+    steps: [
+      'Stand in Tadasana, close your eyes briefly to check in with your body.',
+      'Shift weight to one foot and root it into the earth deliberately.',
+      'Place the opposite foot on the inner thigh. Reach arms overhead.',
+      'Close your eyes if you feel steady. Explore the edge of your balance.',
+      'Stay for 12–15 breaths. This is your practice in its fullest expression.',
+    ]
+  }
+};
+
+/* ══════════════════════════════════════
+   STATE INFO
+══════════════════════════════════════ */
+const stateInfo = {
+  hyperarousal:{
+    name:"Restless &amp; <em>Overstimulated</em>",
+    desc:"Your nervous system is running hot. There is energy — perhaps too much of it. Your practice today is about softening, releasing, and coming home to stillness."
+  },
+  lowActivation:{
+    name:"Low &amp; <em>Depleted</em>",
+    desc:"Your energy is drawn inward and heavy. Your practice today is about gentle kindling — warming the body slowly, inviting vitality back without force."
+  },
+  cognitiveOverload:{
+    name:"Scattered &amp; <em>Overloaded</em>",
+    desc:"Your mind is carrying too many threads. Your practice today is about anchoring attention — single-pointed, grounding, and deeply present."
+  },
+  regulated:{
+    name:"Centered &amp; <em>Balanced</em>",
+    desc:"You are in a rare, clear space. Your practice today can be exploratory and expressive — build on this steadiness."
+  }
+};
+
+/* ══════════════════════════════════════
+   WORKOUT CTA DATA
+══════════════════════════════════════ */
+const workoutCTA = {
+  hyperarousal:{ title:"Anxious <em>Energy Release</em> Workout",  desc:"A calming, grounding sequence crafted to discharge restless energy and regulate your overstimulated nervous system.", page:"anxious-workout.html",  btnLabel:"Start Calming Workout" },
+  lowActivation:{ title:"Energy <em>Rekindling</em> Workout",      desc:"A gentle energising flow designed to warm the body from the inside out, lifting fatigue and restoring vitality.", page:"fatigue-workout.html",  btnLabel:"Start Energising Workout" },
+  cognitiveOverload:{ title:"Mental <em>Clarity</em> Workout",     desc:"A grounding, single-point-focus sequence that strips away mental noise and restores sharp, present awareness.", page:"overload-workout.html", btnLabel:"Start Clarity Workout" },
+  regulated:{ title:"Expansive <em>Flow</em> Workout",             desc:"You are in a great place. Use this balanced state to explore a dynamic, expressive practice that celebrates your steadiness.", page:"balanced-workout.html", btnLabel:"Start Flow Workout" }
+};
+
+/* ══════════════════════════════════════
+   REACTION TIME SCORING
+══════════════════════════════════════ */
+function reactionTimeScore(ms) {
+  if(ms<200) return null;
+  if(ms<800)  return {cluster:'hyperarousal',    pts:2,label:ms+'ms · Fast instinct — restless energy.',   badge:'Impulsive'};
+  if(ms<1500) return {cluster:'regulated',        pts:2,label:ms+'ms · Deliberate — well-regulated.',       badge:'Balanced'};
+  if(ms<2500) return {cluster:'cognitiveOverload',pts:2,label:ms+'ms · Hesitant — mind may be overloaded.', badge:'Deliberating'};
+  return             {cluster:'lowActivation',    pts:2,label:ms+'ms · Slow response — low activation.',    badge:'Sluggish'};
+}
+
+/* ══════════════════════════════════════
+   CANVAS SCENES
+══════════════════════════════════════ */
+const scenes = [
+  {
+    id:'storm', label:'Storm', scores:{ hyperarousal:2 },
+    draw(canvas) {
+      const ctx=canvas.getContext('2d'), w=canvas.width, h=canvas.height;
+      const bg=ctx.createLinearGradient(0,0,w,h);
+      bg.addColorStop(0,'#1a0505');bg.addColorStop(.5,'#2d0d00');bg.addColorStop(1,'#0d0506');
+      ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+      const shards=[[[.1,.7],[.25,.1],[.3,.65]],[[.6,.9],[.72,.2],[.8,.85]],
+        [[.4,.5],[.55,.05],[.65,.45]],[[.15,.3],[.22,.8],[.05,.55]],
+        [[.8,.4],[.95,.15],[.9,.7]],[[.35,.9],[.42,.55],[.25,.75]]];
+      const cols=['rgba(220,80,20,','rgba(255,120,0,','rgba(180,30,10,','rgba(240,160,20,'];
+      shards.forEach((pts,i)=>{
+        ctx.beginPath();ctx.moveTo(pts[0][0]*w,pts[0][1]*h);
+        pts.slice(1).forEach(p=>ctx.lineTo(p[0]*w,p[1]*h));ctx.closePath();
+        ctx.fillStyle=cols[i%cols.length]+(0.12+(i%3)*.08)+')';ctx.fill();
+        ctx.strokeStyle=cols[i%cols.length]+'0.7)';ctx.lineWidth=0.5;ctx.stroke();
+      });
+      function bolt(sx,sy,ex,ey,d){
+        if(d===0){ctx.lineTo(ex*w,ey*h);return;}
+        const mx=(sx+ex)/2+(Math.random()-.5)*.12,my=(sy+ey)/2+(Math.random()-.5)*.08;
+        bolt(sx,sy,mx,my,d-1);bolt(mx,my,ex,ey,d-1);
+      }
+      [[.3,0,.18,.9],[.65,0,.5,.85],[.82,0,.72,.7]].forEach(([sx,sy,ex,ey])=>{
+        ctx.beginPath();ctx.moveTo(sx*w,sy*h);bolt(sx,sy,ex,ey,3);
+        ctx.strokeStyle='rgba(255,200,80,0.85)';ctx.lineWidth=1.2;ctx.stroke();
+        ctx.strokeStyle='rgba(255,160,40,0.18)';ctx.lineWidth=5;ctx.stroke();
+      });
+      const vig=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,w*.7);
+      vig.addColorStop(0,'transparent');vig.addColorStop(1,'rgba(0,0,0,.55)');
+      ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
+    }
+  },
+  {
+    id:'void', label:'Dark Stillness', scores:{ lowActivation:2 },
+    draw(canvas) {
+      const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
+      const bg=ctx.createLinearGradient(0,0,0,h);
+      bg.addColorStop(0,'#07080d');bg.addColorStop(.6,'#0b0d14');bg.addColorStop(1,'#060608');
+      ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+      const horizon=h*.72;
+      ctx.beginPath();ctx.moveTo(0,h);ctx.lineTo(0,horizon+10);
+      ctx.bezierCurveTo(w*.15,horizon-5,w*.25,horizon+8,w*.4,horizon+2);
+      ctx.bezierCurveTo(w*.5,horizon-3,w*.6,horizon+12,w*.75,horizon+5);
+      ctx.bezierCurveTo(w*.85,horizon,w*.92,horizon+8,w,horizon+4);
+      ctx.lineTo(w,h);ctx.closePath();ctx.fillStyle='rgba(8,9,14,.9)';ctx.fill();
+      for(let i=0;i<18;i++){
+        const x=Math.random()*w,y=Math.random()*horizon*.85,r=Math.random()*.7+.2;
+        ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(180,185,210,${Math.random()*.25+.05})`;ctx.fill();
+      }
+      const vig=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,w*.75);
+      vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(1,'rgba(0,0,0,.75)');
+      ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
+    }
+  },
+  {
+    id:'ocean', label:'Restless Ocean', scores:{ hyperarousal:1, cognitiveOverload:1 }, animated:true,
+    draw(canvas) {
+      const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
+      let offset=0,raf;
+      function frame(){
+        ctx.clearRect(0,0,w,h);
+        const sky=ctx.createLinearGradient(0,0,0,h*.5);
+        sky.addColorStop(0,'#0a1828');sky.addColorStop(1,'#0e2438');
+        ctx.fillStyle=sky;ctx.fillRect(0,0,w,h*.5);
+        const waves=[
+          {amp:10,freq:.025,speed:1.2,y:h*.42,c:'#0d3a5a',o:1},
+          {amp:8,freq:.03,speed:1.8,y:h*.48,c:'#0e4a72',o:.95},
+          {amp:7,freq:.04,speed:2.2,y:h*.55,c:'#105580',o:.9},
+          {amp:6,freq:.05,speed:2.8,y:h*.62,c:'#126090',o:.88},
+          {amp:5,freq:.065,speed:3.5,y:h*.68,c:'#1470a5',o:.85},
+        ];
+        waves.forEach(cfg=>{
+          ctx.beginPath();ctx.moveTo(0,h);
+          for(let x=0;x<=w;x+=2){
+            const y=cfg.y+Math.sin(x*cfg.freq+offset*cfg.speed)*cfg.amp+Math.sin(x*cfg.freq*1.3-offset*cfg.speed*.7)*(cfg.amp*.4);
+            x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+          }
+          ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
+          const wg=ctx.createLinearGradient(0,cfg.y-cfg.amp,0,h);
+          wg.addColorStop(0,cfg.c);wg.addColorStop(1,'#071520');
+          ctx.fillStyle=wg;ctx.globalAlpha=cfg.o;ctx.fill();ctx.globalAlpha=1;
+        });
+        const vig=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,w*.7);
+        vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(1,'rgba(0,0,20,.45)');
+        ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
+        offset+=.022;raf=requestAnimationFrame(frame);
+      }
+      frame();
+      return ()=>cancelAnimationFrame(raf);
+    }
+  },
+  {
+    id:'mountain', label:'Mountain Dawn', scores:{ regulated:2 },
+    draw(canvas) {
+      const ctx=canvas.getContext('2d'),w=canvas.width,h=canvas.height;
+      const sky=ctx.createLinearGradient(0,0,0,h);
+      sky.addColorStop(0,'#1a1428');sky.addColorStop(.35,'#2a1e3a');sky.addColorStop(.6,'#3d2a30');sky.addColorStop(.8,'#5a3820');sky.addColorStop(1,'#3a2010');
+      ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
+      const sunY=h*.6;
+      const glow=ctx.createRadialGradient(w*.5,sunY,0,w*.5,sunY,w*.55);
+      glow.addColorStop(0,'rgba(200,130,50,.45)');glow.addColorStop(.4,'rgba(160,80,30,.2)');glow.addColorStop(1,'rgba(160,80,30,0)');
+      ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
+      ctx.beginPath();ctx.moveTo(0,h);ctx.lineTo(0,h*.58);
+      ctx.lineTo(w*.12,h*.38);ctx.lineTo(w*.22,h*.52);ctx.lineTo(w*.35,h*.32);
+      ctx.lineTo(w*.48,h*.5);ctx.lineTo(w*.6,h*.3);ctx.lineTo(w*.72,h*.48);
+      ctx.lineTo(w*.85,h*.35);ctx.lineTo(w,h*.52);ctx.lineTo(w,h);ctx.closePath();
+      const fm=ctx.createLinearGradient(0,h*.3,0,h);fm.addColorStop(0,'#2e2035');fm.addColorStop(1,'#1a1525');ctx.fillStyle=fm;ctx.fill();
+      ctx.beginPath();ctx.moveTo(0,h);ctx.lineTo(0,h*.72);
+      ctx.lineTo(w*.08,h*.55);ctx.lineTo(w*.18,h*.68);ctx.lineTo(w*.28,h*.48);
+      ctx.lineTo(w*.38,h*.62);ctx.lineTo(w*.52,h*.44);ctx.lineTo(w*.62,h*.6);
+      ctx.lineTo(w*.75,h*.5);ctx.lineTo(w*.88,h*.65);ctx.lineTo(w,h*.58);ctx.lineTo(w,h);ctx.closePath();
+      const mm=ctx.createLinearGradient(0,h*.44,0,h);mm.addColorStop(0,'#1c1822');mm.addColorStop(1,'#100e14');ctx.fillStyle=mm;ctx.fill();
+      [[w*.28,h*.48],[w*.52,h*.44],[w*.75,h*.5]].forEach(([px,py])=>{
+        ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px-18,py+22);ctx.lineTo(px+16,py+20);ctx.closePath();
+        const sn=ctx.createLinearGradient(px,py,px,py+22);sn.addColorStop(0,'rgba(230,220,210,.55)');sn.addColorStop(1,'rgba(200,185,170,0)');ctx.fillStyle=sn;ctx.fill();
+      });
+      const vig=ctx.createRadialGradient(w/2,h/2,0,w/2,h/2,w*.72);
+      vig.addColorStop(0,'rgba(0,0,0,0)');vig.addColorStop(1,'rgba(0,0,0,.42)');ctx.fillStyle=vig;ctx.fillRect(0,0,w,h);
+    }
+  }
+];
+
+function shuffleArray(a){
+  a=[...a];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+/* ══════════════════════════════════════
+   CORE QUIZ LOGIC
+══════════════════════════════════════ */
+function startQuiz() {
+  scores.hyperarousal=0;scores.lowActivation=0;scores.cognitiveOverload=0;scores.regulated=0;
+  currentQ=0;
+  showScreen('quiz-screen');
+  setTimeout(renderQuestion,50);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.animation='';});
+  const el=document.getElementById(id);
+  el.style.animation='none';el.classList.add('active');
+  requestAnimationFrame(()=>{el.style.animation='fadeUp 0.5s ease forwards';});
+}
+
+function renderDots() {
+  const wrap=document.getElementById('dots');wrap.innerHTML='';
+  questions.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='dot'+(i<currentQ?' done':i===currentQ?' active':'');
+    wrap.appendChild(d);
+  });
+}
+
+function renderQuestion() {
+  if(cancelWaveAnim){cancelWaveAnim();cancelWaveAnim=null;}
+  const q=questions[currentQ];
+  document.getElementById('progress-fill').style.width=((currentQ/questions.length)*100)+'%';
+  document.getElementById('progress-label').textContent=(currentQ+1)+' / '+questions.length;
+  document.getElementById('q-number').textContent='Question '+String(currentQ+1).padStart(2,'0');
+  document.getElementById('q-text').textContent=q.text;
+  renderDots();
+
+  const optWrap=document.getElementById('options-wrap');
+  const volCont=document.getElementById('volume-container');
+  const imgCont=document.getElementById('imgtest-container');
+  optWrap.innerHTML='';volCont.innerHTML='';imgCont.innerHTML='';
+  optWrap.style.display='none';volCont.style.display='none';imgCont.style.display='none';
+
+  if(q.type==='volume'){
+    volCont.style.display='block';
+    renderVolumeSlider(volCont);
+  } else if(q.type==='imgtest'){
+    imgCont.style.display='block';
+    renderImageTest(imgCont);
+  } else {
+    optWrap.style.display='flex';
+    q.options.forEach(opt=>{
+      const btn=document.createElement('button');
+      btn.className='opt';btn.textContent=opt.label;
+      btn.onclick=()=>selectOption(btn,opt);
+      optWrap.appendChild(btn);
+    });
+  }
+}
+
+function selectOption(btn,opt) {
+  document.querySelectorAll('.opt').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  Object.keys(opt.scores).forEach(k=>{scores[k]+=opt.scores[k];});
+  setTimeout(nextQuestion,480);
+}
+
+function nextQuestion() {
+  currentQ++;
+  if(currentQ>=questions.length){showResults();return;}
+  const card=document.querySelector('.q-card');
+  card.style.transition='opacity 0.22s ease, transform 0.22s ease';
+  card.style.opacity='0';card.style.transform='translateX(-14px)';
+  setTimeout(()=>{
+    card.style.transform='translateX(14px)';
+    renderQuestion();
+    requestAnimationFrame(()=>{
+      card.style.transition='opacity 0.28s ease, transform 0.28s ease';
+      card.style.opacity='1';card.style.transform='translateX(0)';
+    });
+  },220);
+}
+
+/* ══════════════════════════════════════
+   VOLUME SLIDER
+══════════════════════════════════════ */
+function renderVolumeSlider(container) {
+  const wrap=document.createElement('div');wrap.className='volume-wrap';
+
+  const zoneLabels=document.createElement('div');zoneLabels.className='volume-zone-labels';zoneLabels.id='vzone-labels';
+  volumeZones.forEach((z,i)=>{
+    const chip=document.createElement('div');
+    chip.className='vzone'+(i===0?' active-zone':'');chip.id='vzone-'+i;chip.textContent=z.label;
+    zoneLabels.appendChild(chip);
+  });
+  wrap.appendChild(zoneLabels);
+
+  const sliderRow=document.createElement('div');sliderRow.className='slider-row';
+  const track=document.createElement('div');track.className='slider-track';
+  const fill=document.createElement('div');fill.className='slider-track-fill';fill.id='slider-fill';
+  track.appendChild(fill);sliderRow.appendChild(track);
+
+  const dividers=document.createElement('div');dividers.className='slider-zone-dividers';
+  [25,50,75].forEach(pct=>{const s=document.createElement('span');s.style.left=pct+'%';dividers.appendChild(s);});
+  sliderRow.appendChild(dividers);
+
+  const slider=document.createElement('input');
+  slider.type='range';slider.min=0;slider.max=100;slider.value=0;
+  slider.className='volume-slider';slider.id='volume-slider';
+  sliderRow.appendChild(slider);wrap.appendChild(sliderRow);
+
+  const valRow=document.createElement('div');valRow.className='volume-value-row';
+  const pctEl=document.createElement('div');pctEl.className='volume-pct';pctEl.id='volume-pct';pctEl.textContent='0%';
+  const descEl=document.createElement('div');descEl.className='volume-zone-desc';descEl.id='volume-desc';descEl.textContent=volumeZones[0].desc;
+  valRow.appendChild(pctEl);valRow.appendChild(descEl);wrap.appendChild(valRow);
+
+  const btn=document.createElement('button');btn.className='volume-confirm';btn.textContent='Confirm';
+  btn.onclick=()=>{
+    const val=parseInt(slider.value);
+    const zone=getVolumeZone(val);
+    scores[zone.cluster]+=3;
+    nextQuestion();
+  };
+  wrap.appendChild(btn);container.appendChild(wrap);
+
+  slider.addEventListener('input',()=>{
+    const val=parseInt(slider.value);
+    const zone=getVolumeZone(val);
+    const zIdx=volumeZones.indexOf(zone);
+    document.getElementById('slider-fill').style.width=val+'%';
+    document.getElementById('volume-pct').textContent=val+'%';
+    document.getElementById('volume-desc').textContent=zone.desc;
+    volumeZones.forEach((_,i)=>{document.getElementById('vzone-'+i).classList.toggle('active-zone',i===zIdx);});
+  });
+}
+
+/* ══════════════════════════════════════
+   IMAGE REACTION TEST
+══════════════════════════════════════ */
+function renderImageTest(container) {
+  imgTestDone=false;imgTestStartTime=null;
+  if(cancelWaveAnim){cancelWaveAnim();cancelWaveAnim=null;}
+
+  const shuffled=shuffleArray(scenes);
+  const wrap=document.createElement('div');wrap.className='imgtest-wrap';
+
+  const header=document.createElement('div');header.className='imgtest-header';
+  header.innerHTML=`<p class="imgtest-instruction">Don't think — tap the one that catches your eye first.<br>Both your <em>choice</em> and <em>speed</em> are recorded.</p>
+    <span class="imgtest-countdown" id="imgtest-timer"> </span>`;
+  wrap.appendChild(header);
+
+  const grid=document.createElement('div');grid.className='scene-grid';
+  const canvasRefs=[];
+  const resultRow=document.createElement('div');resultRow.className='imgtest-result';resultRow.id='imgtest-result';
+
+  shuffled.forEach(scene=>{
+    const card=document.createElement('div');card.className='scene-card';card.dataset.sceneId=scene.id;
+    const canvas=document.createElement('canvas');canvas.className='scene-canvas';canvas.width=260;canvas.height=150;
+    card.appendChild(canvas);
+    const labelEl=document.createElement('div');labelEl.className='scene-label';labelEl.textContent=scene.label;
+    card.appendChild(labelEl);
+    card.onclick=()=>handleSceneSelect(scene,card,grid,resultRow);
+    grid.appendChild(card);
+    canvasRefs.push({canvas,scene});
+  });
+
+  wrap.appendChild(grid);wrap.appendChild(resultRow);container.appendChild(wrap);
+
+  canvasRefs.forEach(({canvas,scene})=>{
+    if(scene.animated) cancelWaveAnim=scene.draw(canvas);
+    else scene.draw(canvas);
+  });
+
+  requestAnimationFrame(()=>{
+    imgTestStartTime=performance.now();
+    clearInterval(countupInterval);
+    countupInterval=setInterval(()=>{
+      const el=document.getElementById('imgtest-timer');
+      if(!el||imgTestDone){clearInterval(countupInterval);return;}
+      el.textContent=((performance.now()-imgTestStartTime)/1000).toFixed(1)+'s';
+    },100);
+  });
+}
+
+function handleSceneSelect(scene,card,grid,resultRow) {
+  if(imgTestDone) return;
+  imgTestDone=true;
+  clearInterval(countupInterval);
+  if(cancelWaveAnim){cancelWaveAnim();cancelWaveAnim=null;}
+
+  const rt=Math.round(performance.now()-imgTestStartTime);
+  const timerEl=document.getElementById('imgtest-timer');
+  if(timerEl) timerEl.textContent=(rt/1000).toFixed(2)+'s';
+
+  card.classList.add('selected');
+  grid.querySelectorAll('.scene-card').forEach(c=>{if(c!==card)c.classList.add('dimmed');});
+
+  Object.keys(scene.scores).forEach(k=>{scores[k]+=scene.scores[k];});
+  const rtResult=reactionTimeScore(rt);
+  if(rtResult) scores[rtResult.cluster]+=rtResult.pts;
+
+  const imageDesc={
+    storm:    {text:'Drawn to chaos & intensity — restless arousal.',  badge:'Storm / Chaos',  color:'#e8824a'},
+    void:     {text:'Drawn to darkness & stillness — low energy.',     badge:'Dark Stillness', color:'#7090e8'},
+    ocean:    {text:'Drawn to restless movement — cognitive busyness.',badge:'Restless Ocean',  color:'#00ffd5'},
+    mountain: {text:'Drawn to serene nature — centered state.',        badge:'Mountain Dawn',  color:'#00c896'},
+  };
+  const imgMeta=imageDesc[scene.id];
+
+  resultRow.innerHTML=`
+    <div class="result-row">
+      <span class="result-badge badge-img" style="border-color:${imgMeta.color};color:${imgMeta.color}">${imgMeta.badge}</span>
+      <span class="result-explain">${imgMeta.text}</span>
+    </div>
+    ${rtResult?`<div class="result-row">
+      <span class="result-badge badge-time">${rtResult.badge}</span>
+      <span class="result-explain">${rtResult.label}</span>
+    </div>`:''}
+    <button class="imgtest-continue" onclick="nextQuestion()">Continue →</button>`;
+  resultRow.classList.add('show');
+}
+
+/* ══════════════════════════════════════
+   RESULTS
+══════════════════════════════════════ */
+function showResults() {
+  const total=Object.values(scores).reduce((a,b)=>a+b,0)||1;
+  const pct={};
+  Object.keys(scores).forEach(k=>{pct[k]=scores[k]/total;});
+  const sorted=Object.keys(pct).sort((a,b)=>pct[b]-pct[a]);
+  const dominant=sorted[0];
+  const isMixed=(pct[sorted[0]]-pct[sorted[1]])<0.12;
+
+  fetch("http://localhost:5000/save-result", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    name: "Test User",
+    email: "test@gmail.com",
+    phone: "1234567890",
+    hyperarousal,
+    lowActivation,
+    cognitiveOverload,
+    regulated,
+    finalState: state
+  })
+})
+.then(res => res.json())
+.then(data => console.log(data))
+.catch(err => console.error(err));
+
+  showScreen('results-screen');
+
+  setTimeout(()=>{
+    // State header
+    const info=stateInfo[dominant];
+    document.getElementById('result-state-name').innerHTML=info.name;
+    let desc=info.desc;
+    if(isMixed){
+      const map={hyperarousal:'restlessness',lowActivation:'fatigue',cognitiveOverload:'mental overload',regulated:'balance'};
+      desc+=' Traces of '+(map[sorted[1]]||sorted[1])+' are also present.';
+    }
+    document.getElementById('result-state-desc').textContent=desc;
+
+    // Score bars
+    const barMap=[
+      ['bar-hyper','pct-hyper','hyperarousal'],
+      ['bar-low',  'pct-low',  'lowActivation'],
+      ['bar-cog',  'pct-cog',  'cognitiveOverload'],
+      ['bar-reg',  'pct-reg',  'regulated'],
+    ];
+    barMap.forEach(([bId,pId,key],i)=>{
+      const p=Math.round(pct[key]*100);
+      setTimeout(()=>{
+        document.getElementById(bId).style.width=p+'%';
+        document.getElementById(pId).textContent=p+'%';
+      },100+i*90);
+    });
+
+    // Single pose card
+    setTimeout(()=>{
+      const pose=poseForState[dominant];
+      const container=document.getElementById('pose-card-container');
+      container.style.cssText='opacity:0;transform:translateY(16px);transition:opacity 0.6s ease,transform 0.6s ease;width:100%';
+      container.innerHTML=`
+        <div class="pose-card-single">
+          <div class="pose-card-inner">
+            <div class="pose-visual">${pose.emoji}</div>
+            <div class="pose-info">
+              <span class="pose-sanskrit-tag">${pose.sanskrit}</span>
+              <div class="pose-name-big">${pose.name}</div>
+              <p class="pose-desc-text">${pose.desc}</p>
+              <div class="pose-benefits">
+                ${pose.benefits.map(b=>`<span class="benefit-chip">${b}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="pose-steps">
+            ${pose.steps.map((s,i)=>`
+              <div class="pose-step">
+                <span class="pose-step-num">${i+1}</span>
+                <span>${s}</span>
+              </div>`).join('')}
+          </div>
+        </div>`;
+      requestAnimationFrame(()=>{container.style.opacity='1';container.style.transform='translateY(0)';});
+    },500);
+
+    // Workout CTA
+    setTimeout(()=>{
+      const cta=workoutCTA[dominant];
+      const wrap=document.getElementById('workout-cta');
+      wrap.style.cssText='opacity:0;transform:translateY(14px);transition:opacity 0.6s ease,transform 0.6s ease';
+      wrap.innerHTML=`
+        <div class="workout-cta-wrap">
+          <span class="workout-cta-label">Your recommended next step</span>
+          <div class="workout-cta-title">${cta.title}</div>
+          <p class="workout-cta-desc">${cta.desc}</p>
+          <a href="${cta.page}" class="btn-workout">${cta.btnLabel} →</a>
+        </div>`;
+      requestAnimationFrame(()=>{wrap.style.opacity='1';wrap.style.transform='translateY(0)';});
+    },900);
+
+  },200);
+}
+
+function restartQuiz() {
+  if(cancelWaveAnim){cancelWaveAnim();cancelWaveAnim=null;}
+  clearInterval(countupInterval);
+  scores.hyperarousal=0;scores.lowActivation=0;scores.cognitiveOverload=0;scores.regulated=0;
+  currentQ=0;
+  showScreen('welcome-screen');
+}
+</script>
+</body>
+</html>
