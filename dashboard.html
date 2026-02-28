@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Mind Mudra</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.7)),
+    url("https://images.unsplash.com/photo-1474418397713-7ede21d49118");
+    background-size:cover;
+    background-position:center;
+    color:white;
+}
+
+/* Navbar */
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 40px;
+    animation:fadeDown 0.8s ease;
+}
+
+.logo{
+    font-size:26px;
+    font-weight:bold;
+    letter-spacing:1px;
+}
+
+nav button{
+    padding:8px 18px;
+    border:none;
+    border-radius:20px;
+    background:#00c896;
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+nav button:hover{
+    transform:scale(1.05);
+}
+
+/* Welcome Section */
+.welcome{
+    text-align:center;
+    margin-top:20px;
+    animation:fadeUp 1s ease;
+}
+
+.welcome h1{
+    font-size:40px;
+}
+
+.welcome p{
+    opacity:0.9;
+    margin-top:10px;
+}
+
+/* Cards Layout */
+.dashboard{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+    gap:30px;
+    padding:60px 10%;
+}
+
+.card{
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(10px);
+    padding:30px;
+    border-radius:18px;
+    text-align:center;
+    transition:0.4s;
+    animation:fadeUp 1s ease;
+}
+
+.card:hover{
+    transform:translateY(-10px) scale(1.03);
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
+
+.card h2{
+    margin-bottom:10px;
+}
+
+.card p{
+    opacity:0.85;
+    margin-bottom:20px;
+}
+
+.card button{
+    padding:10px 20px;
+    border:none;
+    border-radius:20px;
+    background:#00c896;
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.card button:hover{
+    transform:scale(1.08);
+}
+
+/* Animations */
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes fadeDown{
+    from{
+        opacity:0;
+        transform:translateY(-30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* Footer */
+footer{
+    text-align:center;
+    padding:20px;
+    opacity:0.7;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav>
+<div class="logo">Mind Mudra</div>
+<button onclick="logout()">Logout</button>
+</nav>
+
+<!-- Welcome -->
+<section class="welcome">
+<h1>Welcome Back</h1>
+<p>Your mental wellness journey starts here.</p>
+</section>
+
+<!-- Dashboard Cards -->
+<section class="dashboard">
+
+<div class="card">
+<h2>Mental Health Check</h2>
+<p>Tell us how you're feeling today and get personalized recommendations.</p>
+<button onclick="mentalCheck()">Start Check</button>
+</div>
+
+
+<div class="card">
+<h2>Emergency Help</h2>
+<p>Access mental health support resources instantly.</p>
+<button onclick="emergencyHelp()">Get Help</button>
+</div>
+
+</section>
+
+<footer>
+Mind Mudra • Mental Wellness Platform
+</footer>
+
+<script>
+function logout(){
+    window.location.href = "index.html";
+}
+
+function mentalCheck(){
+    window.location.href = "questionnaire.html";
+}
+
+function startYoga(){
+    alert("Yoga monitoring will start here.");
+    window.location.href ="anxious-workout.html";
+}
+
+function viewProgress(){
+    window.location.href = "progress.html";
+}
+
+function emergencyHelp(){
+    window.location.href = "emergency.html";
+}
+</script>
+
+</body>
+</html>
+
+
