@@ -1209,25 +1209,26 @@ function showResults() {
   const dominant=sorted[0];
   const isMixed=(pct[sorted[0]]-pct[sorted[1]])<0.12;
 
-  fetch("http://localhost:5000/save-result", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    name: "Test User",
-    email: "test@gmail.com",
-    phone: "1234567890",
-    hyperarousal,
-    lowActivation,
-    cognitiveOverload,
-    regulated,
-    finalState: state
-  })
-})
-.then(res => res.json())
-.then(data => console.log(data))
-.catch(err => console.error(err));
+  // Save result (safe — won't crash if backend is unavailable)
+  try {
+    fetch("http://localhost:5000/save-result", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: "Test User",
+        email: "test@gmail.com",
+        phone: "1234567890",
+        hyperarousal:      scores.hyperarousal,
+        lowActivation:     scores.lowActivation,
+        cognitiveOverload: scores.cognitiveOverload,
+        regulated:         scores.regulated,
+        finalState:        dominant
+      })
+    })
+    .then(res => res.json())
+    .then(data => console.log("Saved:", data))
+    .catch(err => console.warn("Backend unavailable:", err));
+  } catch(e) { /* no backend — continue */ }
 
   showScreen('results-screen');
 
