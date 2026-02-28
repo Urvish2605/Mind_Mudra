@@ -1,0 +1,201 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Mobile & Safe Area -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <!-- PWA / Theme -->
+    <meta name="theme-color" content="#0f172a">
+    <meta name="description" content="Real-time form analysis using camera.">
+
+    <title>Personal Yoga Therapist</title>
+
+    <!-- ===================== -->
+    <!-- PWA SUPPORT (CRITICAL) -->
+    <!-- ===================== -->
+
+    <link rel="manifest" href="manifest.json">
+
+    <!-- iOS PWA Support -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FitSync">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <!-- Permissions Policy -->
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=()">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- ===================== -->
+    <!-- STYLES (UNCHANGED) -->
+    <!-- ===================== -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #020617, #020617 40%, #0f172a);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: clamp(1.6rem, 4vw, 2.2rem);
+            font-weight: 700;
+        }
+
+        header p {
+            margin-top: 6px;
+            font-size: 0.95rem;
+            color: #cbd5f5;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            max-height: 80vh;
+            overflow: hidden;
+            border-radius: 14px;
+            background: #020617;
+        }
+
+        video,
+        canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        canvas {
+            pointer-events: none;
+        }
+
+        .controls {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        button {
+            width: 100%;
+            max-width: 260px;
+            padding: 14px 18px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 999px;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #022c22;
+            box-shadow: 0 10px 20px rgba(34, 197, 94, 0.4);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        button:active {
+            transform: scale(0.96);
+            box-shadow: 0 6px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        #status {
+            font-size: 0.95rem;
+            color: #e5e7eb;
+            text-align: center;
+        }
+
+        footer {
+            margin-top: 14px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .controls {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            button {
+                max-width: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <header>
+            <h1>💪 MindMudra :Personal Yoga Therapist</h1>
+            <p>AI-powered real-time form correction</p>
+        </header>
+
+        <div class="card">
+            <div class="video-wrapper">
+                <video id="video" autoplay playsinline muted></video>
+                <canvas id="canvas"></canvas>
+            </div>
+
+            <div class="controls">
+                <button id="startBtn">Start Camera</button>
+            </div>
+
+            <div id="status">
+                Tap <strong>Start Camera</strong> and perform the Uttanasana pose in view.
+            </div>
+        </div>
+
+        <footer>
+            Real-time AR feedback • Runs fully on-device
+        </footer>
+    </div>
+
+    <!-- ===================== -->
+    <!-- MEDIAPIPE -->
+    <!-- ===================== -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/pose.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1620248257/drawing_utils.js"></script>
+
+    <!-- ===================== -->
+    <!-- YOUR CORE LOGIC (UNCHANGED) -->
+    <!-- ===================== -->
+    <script src="fatigue-workout.js"></script>
+</body>
+</html>
